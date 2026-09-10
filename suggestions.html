@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Suggestion Box - Fleetwood IT Support</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =========================================
+           SUGGESTION BOX
+        ========================================= */
+
+        .suggestions-page {
+            min-height: 100vh;
+            background: #f4f7fb;
+        }
+
+        .suggestions-container {
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            color: #172033;
+            font-size: 28px;
+        }
+
+        .page-header p {
+            margin: 7px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .refresh-btn {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .refresh-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* =========================================
+           SUMMARY
+        ========================================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-card span {
+            display: block;
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-card strong {
+            font-size: 27px;
+            color: #172033;
+        }
+
+        .summary-card.new {
+            border-left: 4px solid #2563eb;
+        }
+
+        .summary-card.review {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .summary-card.progress {
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .summary-card.done {
+            border-left: 4px solid #16a34a;
+        }
+
+        .summary-card.rejected {
+            border-left: 4px solid #dc2626;
+        }
+
+        /* =========================================
+           FILTERS
+        ========================================= */
+
+        .filter-panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        .filter-panel input,
+        .filter-panel select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            background: white;
+        }
+
+        .filter-panel input:focus,
+        .filter-panel select:focus {
+            border-color: #2563eb;
+        }
+
+        /* =========================================
+           TABLE
+        ========================================= */
+
+        .table-panel {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-header h2 {
+            margin: 0;
+            color: #172033;
+            font-size: 18px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .suggestions-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .suggestions-table th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12px;
+            text-align: left;
+            padding: 13px 15px;
+            white-space: nowrap;
+        }
+
+        .suggestions-table td {
+            padding: 15px;
+            border-top: 1px solid #eef2f7;
+            color: #334155;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .suggestions-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .reference {
+            font-weight: 700;
+            color: #7c3aed;
+        }
+
+        .subject-cell {
+            font-weight: 600;
+            color: #172033;
+            max-width: 250px;
+        }
+
+        /* =========================================
+           STATUS
+        ========================================= */
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-new {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-review {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-progress {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .status-implemented {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* =========================================
+           VIEW BUTTON
+        ========================================= */
+
+        .view-btn {
+            border: none;
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 8px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .view-btn:hover {
+            background: #dbeafe;
+        }
+
+        /* =========================================
+           MODAL
+        ========================================= */
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15,23,42,0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 50px rgba(15,23,42,0.25);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #172033;
+        }
+
+        .close-btn {
+            border: none;
+            background: #f1f5f9;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            color: #475569;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .detail-row {
+            margin-bottom: 18px;
+        }
+
+        .detail-label {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            color: #172033;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .suggestion-content {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            white-space: pre-wrap;
+            line-height: 1.7;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 22px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .modal-actions select {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .update-btn {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .update-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .comment-box {
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .comment-box:focus {
+            border-color: #2563eb;
+        }
+
+        /* =========================================
+           EMPTY
+        ========================================= */
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 1000px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .filter-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .suggestions-container {
+                padding: 20px 15px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-actions select,
+            .update-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+
+            <div class="brand-icon">
+                🛠️
+            </div>
+
+            <div>
+                <h2>Fleetwood IT</h2>
+                <small>Support Management</small>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="dashboard.html">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="tickets.html">
+                <span>🎫</span>
+                <span>Tickets</span>
+            </a>
+
+            <a href="staff-directory.html">
+                <span>👥</span>
+                <span>Staff Directory</span>
+            </a>
+
+            <a href="assets.html">
+                <span>💻</span>
+                <span>IT Assets</span>
+            </a>
+
+            <a href="maintenance.html">
+                <span>🔧</span>
+                <span>Maintenance</span>
+            </a>
+
+            <a href="reports.html">
+                <span>📈</span>
+                <span>Reports</span>
+            </a>
+
+            <a href="suggestions.html"
+               class="active">
+                <span>💡</span>
+                <span>Suggestion Box</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================== -->
+
+    <main class="main-content">
+
+        <div class="suggestions-container">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>💡 Suggestion Box</h1>
+
+                    <p>
+                        Anonymous suggestions submitted by staff
+                    </p>
+
+                </div>
+
+                <button
+                    class="refresh-btn"
+                    onclick="loadSuggestions()">
+
+                    ↻ Refresh
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================
+                 SUMMARY CARDS
+            ================================== -->
+
+            <div class="summary-grid">
+
+                <div class="summary-card new">
+
+                    <span>New</span>
+
+                    <strong id="newCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card review">
+
+                    <span>Under Review</span>
+
+                    <strong id="reviewCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card progress">
+
+                    <span>In Progress</span>
+
+                    <strong id="progressCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card done">
+
+                    <span>Implemented</span>
+
+                    <strong id="implementedCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card rejected">
+
+                    <span>Rejected</span>
+
+                    <strong id="rejectedCount">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 FILTERS
+            ================================== -->
+
+            <div class="filter-panel">
+
+                <input
+                    type="text"
+                    id="searchSuggestions"
+                    placeholder="Search suggestions..."
+                >
+
+
+                <select id="categoryFilter">
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    <option value="Workplace">
+                        Workplace
+                    </option>
+
+                    <option value="IT">
+                        IT
+                    </option>
+
+                    <option value="Equipment">
+                        Equipment
+                    </option>
+
+                    <option value="Process">
+                        Process
+                    </option>
+
+                    <option value="Staff Welfare">
+                        Staff Welfare
+                    </option>
+
+                    <option value="Management">
+                        Management
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+
+                <select id="statusFilter">
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="New">
+                        New
+                    </option>
+
+                    <option value="Under Review">
+                        Under Review
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Implemented">
+                        Implemented
+                    </option>
+
+                    <option value="Rejected">
+                        Rejected
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================
+                 TABLE
+            ================================== -->
+
+            <section class="table-panel">
+
+                <div class="table-header">
+
+                    <h2>
+                        Staff Suggestions
+                    </h2>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="suggestions-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Reference</th>
+
+                                <th>Subject</th>
+
+                                <th>Category</th>
+
+                                <th>Department</th>
+
+                                <th>Date</th>
+
+                                <th>Status</th>
+
+                                <th>Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="suggestionsBody">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- =========================================
+     VIEW SUGGESTION MODAL
+========================================== -->
+
+<div class="modal-overlay"
+     id="suggestionModal">
+
+    <div class="modal">
+
+
+        <div class="modal-header">
+
+            <h2>
+                Suggestion Details
+            </h2>
+
+            <button
+                class="close-btn"
+                onclick="closeSuggestionModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Reference Number
+                </span>
+
+                <div class="detail-value"
+                     id="modalReference">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Subject
+                </span>
+
+                <div class="detail-value"
+                     id="modalSubject">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Category
+                </span>
+
+                <div class="detail-value"
+                     id="modalCategory">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Department
+                </span>
+
+                <div class="detail-value"
+                     id="modalDepartment">
+                    Not provided
+                </div>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Date Submitted
+                </span>
+
+                <div class="detail-value"
+                     id="modalDate">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Suggestion
+                </span>
+
+                <div class="suggestion-content"
+                     id="modalSuggestion">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Management Comment
+                </span>
+
+                <textarea
+                    id="modalComment"
+                    class="comment-box"
+                    placeholder="Add a comment or action taken..."></textarea>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <select id="modalStatus">
+
+                    <option value="New">
+                        New
+                    </option>
+
+                    <option value="Under Review">
+                        Under Review
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Implemented">
+                        Implemented
+                    </option>
+
+                    <option value="Rejected">
+                        Rejected
+                    </option>
+
+                </select>
+
+
+                <button
+                    class="update-btn"
+                    onclick="updateSuggestion()">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="suggestions.js"></script>
+
+</body>
+</html>

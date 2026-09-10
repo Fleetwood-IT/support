@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tickets Management | Fleetwood IT Support</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .tickets-page {
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: var(--text-light);
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: var(--fleet-blue);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .ticket-filters {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .ticket-filters input,
+        .ticket-filters select {
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            outline: none;
+            min-width: 180px;
+        }
+
+        .ticket-filters input:focus,
+        .ticket-filters select:focus {
+            border-color: var(--fleet-blue);
+        }
+
+        .tickets-container {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-header h2 {
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .table-header p {
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .tickets-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 950px;
+        }
+
+        .tickets-table th {
+            text-align: left;
+            padding: 15px;
+            background: #f7f9fc;
+            color: var(--text-light);
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .tickets-table td {
+            padding: 16px 15px;
+            border-top: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .tickets-table tr:hover {
+            background: #f9fbff;
+        }
+
+        .ticket-number {
+            color: var(--fleet-blue);
+            font-weight: 700;
+        }
+
+        .status,
+        .priority {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status.open {
+            background: #fff4e5;
+            color: #d97706;
+        }
+
+        .status.progress {
+            background: #eaf3ff;
+            color: #1268d8;
+        }
+
+        .status.resolved {
+            background: #e9f9f1;
+            color: #15945a;
+        }
+
+        .status.closed {
+            background: #edf0f4;
+            color: #5d6878;
+        }
+
+        .priority.low {
+            background: #edf7ff;
+            color: #3b82f6;
+        }
+
+        .priority.normal {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .priority.high {
+            background: #fff4e5;
+            color: #d97706;
+        }
+
+        .priority.critical {
+            background: #ffe9ec;
+            color: #dc2626;
+        }
+
+        .view-btn {
+            border: none;
+            background: var(--fleet-blue-light);
+            color: var(--fleet-blue);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .view-btn:hover {
+            background: var(--fleet-blue);
+            color: white;
+        }
+
+        .auto-closed-note {
+            margin-top: 15px;
+            padding: 12px 15px;
+            background: #fff8e8;
+            border: 1px solid #f4d58d;
+            border-radius: 10px;
+            color: #8a6200;
+            font-size: 13px;
+        }
+
+        /* MODAL */
+
+        .ticket-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 22, 45, 0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .ticket-modal.show {
+            display: flex;
+        }
+
+        .ticket-modal-box {
+            background: white;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 18px;
+            padding: 28px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            border: none;
+            background: transparent;
+            font-size: 25px;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .ticket-title {
+            margin-bottom: 25px;
+            padding-right: 30px;
+        }
+
+        .ticket-title h2 {
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .ticket-title span {
+            color: var(--fleet-blue);
+            font-weight: 700;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .detail-box {
+            background: #f7f9fc;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .detail-box label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .detail-box strong {
+            color: var(--text-dark);
+        }
+
+        .description-box {
+            margin-bottom: 25px;
+        }
+
+        .description-box h3 {
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .description-content {
+            background: #f7f9fc;
+            padding: 16px;
+            border-radius: 10px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .action-section {
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .action-section h3 {
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .action-description {
+            color: var(--text-light);
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-row select {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .save-btn {
+            border: none;
+            background: var(--fleet-blue);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 9px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: var(--fleet-blue-dark);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .closed-message {
+            margin-top: 15px;
+            padding: 13px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 700px) {
+
+            .tickets-page {
+                padding: 18px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="tickets-page">
+
+    <!-- HEADER -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Tickets Management</h1>
+
+            <p>
+                View, manage and resolve Fleetwood IT support requests.
+            </p>
+
+        </div>
+
+        <!--
+            FIX: previously this pointed to "index.html",
+            which is the LOGIN page, not the dashboard.
+            That made "Dashboard" effectively log you out
+            visually by dropping you back on the login screen.
+            Corrected to "dashboard.html".
+        -->
+        <a href="dashboard.html" class="back-btn">
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="ticket-filters">
+
+        <input
+            type="text"
+            id="searchTicket"
+            placeholder="Search ticket, staff or subject..."
+        >
+
+        <select id="statusFilter">
+
+            <option value="">
+                All Status
+            </option>
+
+            <option value="Open">
+                Open
+            </option>
+
+            <option value="In Progress">
+                In Progress
+            </option>
+
+            <option value="Resolved">
+                Resolved
+            </option>
+
+            <option value="Closed">
+                Closed
+            </option>
+
+        </select>
+
+
+        <select id="priorityFilter">
+
+            <option value="">
+                All Priorities
+            </option>
+
+            <option value="Critical">
+                Critical
+            </option>
+
+            <option value="High">
+                High
+            </option>
+
+            <option value="Normal">
+                Normal
+            </option>
+
+            <option value="Low">
+                Low
+            </option>
+
+        </select>
+
+
+        <select id="categoryFilter">
+
+            <option value="">
+                All Request Types
+            </option>
+
+            <option value="IT Support">
+                IT Problem
+            </option>
+
+            <option value="Equipment Request">
+                Equipment Request
+            </option>
+
+            <option value="Repair">
+                Repair
+            </option>
+
+            <option value="Laptop Replacement">
+                Laptop Replacement
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- TICKETS -->
+
+    <div class="tickets-container">
+
+        <div class="table-header">
+
+            <h2>
+                All IT Requests
+            </h2>
+
+            <p>
+                Tickets are automatically closed after 3 days if they remain unresolved.
+            </p>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="tickets-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Ticket</th>
+
+                        <th>Staff</th>
+
+                        <th>Department</th>
+
+                        <th>Request</th>
+
+                        <th>Subject</th>
+
+                        <th>Priority</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="allTicketsBody">
+
+                    <tr>
+
+                        <td colspan="8" class="empty-message">
+                            Loading tickets...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TICKET DETAILS MODAL -->
+
+<div class="ticket-modal" id="ticketModal">
+
+    <div class="ticket-modal-box">
+
+        <button
+            class="modal-close"
+            id="closeModal"
+        >
+            ×
+        </button>
+
+
+        <div class="ticket-title">
+
+            <h2 id="modalSubject">
+                Ticket Details
+            </h2>
+
+            <span id="modalTicketNumber">
+                IT-000
+            </span>
+
+        </div>
+
+
+        <div class="detail-grid">
+
+            <div class="detail-box">
+
+                <label>
+                    Staff
+                </label>
+
+                <strong id="modalStaff">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <label>
+                    Department
+                </label>
+
+                <strong id="modalDepartment">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <label>
+                    Request Type
+                </label>
+
+                <strong id="modalCategory">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <label>
+                    Priority
+                </label>
+
+                <strong id="modalPriority">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <label>
+                    Date Submitted
+                </label>
+
+                <strong id="modalDate">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <label>
+                    Current Status
+                </label>
+
+                <strong id="modalStatus">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+
+        <div class="description-box">
+
+            <h3>
+                Description
+            </h3>
+
+            <div
+                class="description-content"
+                id="modalDescription"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <!-- UPDATE -->
+
+        <div
+            class="action-section"
+            id="actionSection"
+        >
+
+            <h3>
+                Update Ticket
+            </h3>
+
+            <p class="action-description">
+                Mark the ticket as In Progress when work has started,
+                or Resolved when the problem has been solved.
+                Tickets are closed automatically after 3 days if unresolved.
+            </p>
+
+
+            <div class="action-row">
+
+                <select id="updateStatus">
+
+                    <option value="Open">
+                        Open
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Resolved">
+                        Resolved
+                    </option>
+
+                </select>
+
+
+                <select id="updatePriority">
+
+                    <option value="Low">
+                        Low
+                    </option>
+
+                    <option value="Normal">
+                        Normal
+                    </option>
+
+                    <option value="High">
+                        High
+                    </option>
+
+                    <option value="Critical">
+                        Critical
+                    </option>
+
+                </select>
+
+
+                <button
+                    class="save-btn"
+                    id="saveTicket"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="closed-message"
+            id="closedMessage"
+            style="display:none;"
+        >
+            This ticket has been closed automatically because it remained unresolved for 3 days.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- TICKETS JAVASCRIPT -->
+
+<script src="tickets.js"></script>
+
+</body>
+</html>

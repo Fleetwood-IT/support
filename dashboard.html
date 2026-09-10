@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Fleetwood IT Support Center</title>
+
+<link
+    rel="stylesheet"
+    href="style.css"
+>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =====================================================
+     SIDEBAR
+====================================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-glow"></div>
+
+    <!-- LOGO -->
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            <span>F</span>
+        </div>
+
+        <div class="logo-text">
+
+            <h2>Fleetwood</h2>
+
+            <span>
+                IT Support Center
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- MAIN MENU -->
+
+    <div class="nav-label">
+        MAIN MENU
+    </div>
+
+
+    <nav>
+
+        <!-- DASHBOARD -->
+
+        <a
+            href="dashboard.html"
+            class="active"
+        >
+
+            <span class="nav-icon">
+                ▦
+            </span>
+
+            <div>
+
+                <strong>
+                    Dashboard
+                </strong>
+
+                <small>
+                    Overview
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- TICKETS -->
+
+        <a href="tickets.html">
+
+            <span class="nav-icon">
+                🎫
+            </span>
+
+            <div>
+
+                <strong>
+                    Tickets
+                </strong>
+
+                <small>
+                    Support requests
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- NEW TICKET -->
+
+        <a
+            href="#"
+            onclick="openTicketForm(); return false;"
+        >
+
+            <span class="nav-icon">
+                ＋
+            </span>
+
+            <div>
+
+                <strong>
+                    New Ticket
+                </strong>
+
+                <small>
+                    Report an issue
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- STAFF DIRECTORY -->
+
+        <a href="staff-directory.html">
+
+            <span class="nav-icon">
+                👥
+            </span>
+
+            <div>
+
+                <strong>
+                    Staff Directory
+                </strong>
+
+                <small>
+                    Staff & devices
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- MANAGEMENT -->
+
+        <div class="nav-label nav-label-space">
+            MANAGEMENT
+        </div>
+
+
+        <!-- IT ASSETS -->
+
+        <a href="assets.html">
+
+            <span class="nav-icon">
+                💻
+            </span>
+
+            <div>
+
+                <strong>
+                    IT Assets
+                </strong>
+
+                <small>
+                    Company devices
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- MAINTENANCE -->
+
+        <a href="maintenance.html">
+
+            <span class="nav-icon">
+                🔧
+            </span>
+
+            <div>
+
+                <strong>
+                    Maintenance
+                </strong>
+
+                <small>
+                    Repairs & service
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- REPORTS -->
+
+        <a href="reports.html">
+
+            <span class="nav-icon">
+                📊
+            </span>
+
+            <div>
+
+                <strong>
+                    Reports
+                </strong>
+
+                <small>
+                    IT analytics
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- SUGGESTIONS -->
+
+        <a href="suggestions.html">
+
+            <span class="nav-icon">
+                💡
+            </span>
+
+            <div>
+
+                <strong>
+                    Suggestions
+                </strong>
+
+                <small>
+                    Staff suggestions
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- SYSTEM -->
+
+        <div class="nav-label nav-label-space">
+            SYSTEM
+        </div>
+
+
+        <!-- KNOWLEDGE BASE -->
+
+        <a href="knowledge-base.html">
+
+            <span class="nav-icon">
+                📚
+            </span>
+
+            <div>
+
+                <strong>
+                    Knowledge Base
+                </strong>
+
+                <small>
+                    IT guides
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- NOTIFICATIONS -->
+
+        <a href="notifications.html">
+
+            <span class="nav-icon notification-icon">
+
+                🔔
+
+                <b>
+                    3
+                </b>
+
+            </span>
+
+            <div>
+
+                <strong>
+                    Notifications
+                </strong>
+
+                <small>
+                    Recent activity
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- SETTINGS -->
+
+        <a href="settings.html">
+
+            <span class="nav-icon">
+                ⚙
+            </span>
+
+            <div>
+
+                <strong>
+                    Settings
+                </strong>
+
+                <small>
+                    System settings
+                </small>
+
+            </div>
+
+        </a>
+
+    </nav>
+
+
+    <!-- SIDEBAR FOOTER -->
+
+    <div class="sidebar-bottom">
+
+        <div class="support-status">
+
+            <span class="status-dot"></span>
+
+            <div>
+
+                <strong>
+                    IT Support Online
+                </strong>
+
+                <small>
+                    Available for assistance
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="user-mini">
+
+            <div class="avatar" id="itUserAvatar">
+                IT
+            </div>
+
+            <div>
+
+                <strong id="itUserName">
+                    IT Officer
+                </strong>
+
+                <small id="itUserRole">
+                    Administrator
+                </small>
+
+            </div>
+
+            <span
+                class="user-more"
+                title="Logout"
+                style="cursor:pointer;"
+                onclick="logoutIT()"
+            >
+                ⋮
+            </span>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+====================================================== -->
+
+<main class="main">
+
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <div class="page-heading">
+
+            <div class="breadcrumb">
+
+                Fleetwood Lending Limited
+
+                <span>
+                    ›
+                </span>
+
+                IT Support
+
+            </div>
+
+
+            <h1>
+                Good morning, IT Officer 👋
+            </h1>
+
+
+            <p>
+                Here's what's happening across Fleetwood's IT environment.
+            </p>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+            <button
+                class="icon-button"
+                title="Notifications"
+                type="button"
+                onclick="window.location.href='notifications.html'"
+            >
+
+                🔔
+
+                <span class="notification-dot"></span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-button"
+                title="Logout"
+                onclick="logoutIT()"
+            >
+
+                🚪
+
+            </button>
+
+
+            <button
+                type="button"
+                class="new-ticket-btn"
+                onclick="openTicketForm()"
+            >
+
+                <span>
+                    ＋
+                </span>
+
+                New Ticket
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =================================================
+         HERO
+    ================================================== -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="hero-tag">
+
+                <span class="pulse"></span>
+
+                FLEETWOOD IT OPERATIONS
+
+            </div>
+
+
+            <h2>
+
+                Keeping Fleetwood
+
+                <span>
+                    connected.
+                </span>
+
+            </h2>
+
+
+            <p>
+
+                Monitor support requests, resolve technical issues,
+                manage company devices and keep everyone productive.
+
+            </p>
+
+
+            <div class="hero-actions">
+
+                <button
+                    class="hero-button"
+                    onclick="openTicketForm()"
+                >
+
+                    🎫 Create Support Ticket
+
+                </button>
+
+
+                <a
+                    href="tickets.html"
+                    class="hero-secondary"
+                >
+
+                    View IT Tickets →
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- FLOATING TECH OBJECTS -->
+
+        <div class="hero-visual">
+
+            <div class="orbit orbit-one"></div>
+
+            <div class="orbit orbit-two"></div>
+
+
+            <div class="floating-object laptop">
+
+                <div class="laptop-screen">
+
+                    <div class="screen-top"></div>
+
+                    <div class="screen-content">
+
+                        <div class="screen-line long"></div>
+
+                        <div class="screen-line medium"></div>
+
+
+                        <div class="screen-cards">
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="laptop-base"></div>
+
+            </div>
+
+
+            <div class="floating-object floating-router">
+                📡
+            </div>
+
+
+            <div class="floating-object floating-cloud">
+                ☁️
+            </div>
+
+
+            <div class="floating-object floating-shield">
+                🛡️
+            </div>
+
+
+            <div class="floating-object floating-code">
+                &lt;/&gt;
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         STATISTICS
+    ================================================== -->
+
+    <section class="stats">
+
+
+        <!-- OPEN -->
+
+        <div class="stat-card stat-blue">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    🎫
+                </div>
+
+                <span class="stat-arrow">
+                    ↗
+                </span>
+
+            </div>
+
+
+            <div class="stat-info">
+
+                <span>
+                    Open Tickets
+                </span>
+
+                <h2 id="statOpen">
+                    0
+                </h2>
+
+                <small>
+                    Awaiting attention
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- IN PROGRESS -->
+
+        <div class="stat-card stat-orange">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    ⚡
+                </div>
+
+                <span class="stat-arrow">
+                    ↗
+                </span>
+
+            </div>
+
+
+            <div class="stat-info">
+
+                <span>
+                    In Progress
+                </span>
+
+                <h2 id="statProgress">
+                    0
+                </h2>
+
+                <small>
+                    Currently being handled
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESOLVED -->
+
+        <div class="stat-card stat-green">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    ✓
+                </div>
+
+                <span class="stat-arrow">
+                    ↗
+                </span>
+
+            </div>
+
+
+            <div class="stat-info">
+
+                <span>
+                    Resolved
+                </span>
+
+                <h2 id="statResolved">
+                    0
+                </h2>
+
+                <small>
+                    Successfully completed
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- HIGH PRIORITY -->
+
+        <div class="stat-card stat-red">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    !
+                </div>
+
+                <span class="stat-arrow">
+                    ↗
+                </span>
+
+            </div>
+
+
+            <div class="stat-info">
+
+                <span>
+                    High Priority
+                </span>
+
+                <h2 id="statHigh">
+                    0
+                </h2>
+
+                <small>
+                    Needs quick attention
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         MAIN DASHBOARD GRID
+    ================================================== -->
+
+    <section class="dashboard-grid">
+
+
+        <!-- TICKET OVERVIEW -->
+
+        <div class="panel ticket-overview">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="section-kicker">
+                        SUPPORT MONITOR
+                    </div>
+
+                    <h2>
+                        Ticket Overview
+                    </h2>
+
+                    <p>
+                        Current support workload
+                    </p>
+
+                </div>
+
+
+                <button class="period-button">
+                    This Week ▾
+                </button>
+
+            </div>
+
+
+            <div class="overview-body">
+
+                <div class="overview-chart">
+
+                    <div class="chart-y">
+
+                        <span>100</span>
+
+                        <span>75</span>
+
+                        <span>50</span>
+
+                        <span>25</span>
+
+                        <span>0</span>
+
+                    </div>
+
+
+                    <div class="chart-area">
+
+                        <div class="chart-grid-line"></div>
+
+                        <div class="chart-grid-line"></div>
+
+                        <div class="chart-grid-line"></div>
+
+                        <div class="chart-grid-line"></div>
+
+
+                        <div class="chart-bars">
+
+
+                            <div class="bar-column">
+
+                                <div class="bar open-bar"></div>
+
+                                <span>
+                                    Mon
+                                </span>
+
+                            </div>
+
+
+                            <div class="bar-column">
+
+                                <div class="bar open-bar bar-medium"></div>
+
+                                <span>
+                                    Tue
+                                </span>
+
+                            </div>
+
+
+                            <div class="bar-column">
+
+                                <div class="bar open-bar bar-high"></div>
+
+                                <span>
+                                    Wed
+                                </span>
+
+                            </div>
+
+
+                            <div class="bar-column">
+
+                                <div class="bar open-bar bar-small"></div>
+
+                                <span>
+                                    Thu
+                                </span>
+
+                            </div>
+
+
+                            <div class="bar-column">
+
+                                <div class="bar open-bar bar-medium"></div>
+
+                                <span>
+                                    Fri
+                                </span>
+
+                            </div>
+
+
+                            <div class="bar-column">
+
+                                <div class="bar open-bar bar-high"></div>
+
+                                <span>
+                                    Sat
+                                </span>
+
+                            </div>
+
+
+                            <div class="bar-column">
+
+                                <div class="bar open-bar bar-small"></div>
+
+                                <span>
+                                    Sun
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="overview-summary">
+
+                    <div class="summary-circle">
+
+                        <div>
+
+                            <strong id="overviewTotal">
+                                0
+                            </strong>
+
+                            <span>
+                                Total
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="legend">
+
+                        <div>
+
+                            <i class="legend-dot blue-dot"></i>
+
+                            Open
+
+                        </div>
+
+
+                        <div>
+
+                            <i class="legend-dot orange-dot"></i>
+
+                            In Progress
+
+                        </div>
+
+
+                        <div>
+
+                            <i class="legend-dot green-dot"></i>
+
+                            Resolved
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="panel quick-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="section-kicker">
+                        SHORTCUTS
+                    </div>
+
+                    <h2>
+                        Quick Actions
+                    </h2>
+
+                    <p>
+                        Common IT tasks
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+
+                <!-- CREATE TICKET -->
+
+                <button
+                    type="button"
+                    onclick="openTicketForm()"
+                >
+
+                    <span class="quick-icon blue-quick">
+                        🎫
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Create Ticket
+                        </strong>
+
+                        <small>
+                            Report an IT problem
+                        </small>
+
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </button>
+
+
+                <!-- STAFF DIRECTORY -->
+
+                <button
+                    type="button"
+                    onclick="window.location.href='staff-directory.html'"
+                >
+
+                    <span class="quick-icon purple-quick">
+                        👥
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Staff Directory
+                        </strong>
+
+                        <small>
+                            Staff & device records
+                        </small>
+
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </button>
+
+
+                <!-- IT ASSETS -->
+
+                <button
+                    type="button"
+                    onclick="window.location.href='assets.html'"
+                >
+
+                    <span class="quick-icon green-quick">
+                        💻
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            IT Assets
+                        </strong>
+
+                        <small>
+                            Computers & devices
+                        </small>
+
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </button>
+
+
+                <!-- MAINTENANCE -->
+
+                <button
+                    type="button"
+                    onclick="window.location.href='maintenance.html'"
+                >
+
+                    <span class="quick-icon orange-quick">
+                        🔧
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Maintenance
+                        </strong>
+
+                        <small>
+                            Repairs & service
+                        </small>
+
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         LOWER DASHBOARD
+    ================================================== -->
+
+    <section class="lower-grid">
+
+
+        <!-- RECENT TICKETS -->
+
+        <div class="panel tickets-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="section-kicker">
+                        SUPPORT REQUESTS
+                    </div>
+
+                    <h2>
+                        Recent Tickets
+                    </h2>
+
+                    <p>
+                        Latest IT support requests
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="tickets.html"
+                    class="view-btn"
+                    style="
+                        display:inline-block;
+                        text-decoration:none;
+                    "
+                >
+
+                    View All →
+
+                </a>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Ticket
+                            </th>
+
+                            <th>
+                                Requester
+                            </th>
+
+                            <th>
+                                Issue
+                            </th>
+
+                            <th>
+                                Priority
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="ticketsTableBody">
+
+                        <tr>
+
+                            <td colspan="5">
+                                Loading tickets...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- IT ACTIVITY -->
+
+        <div class="panel activity-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <div class="section-kicker">
+                        LIVE FEED
+                    </div>
+
+                    <h2>
+                        IT Activity
+                    </h2>
+
+                    <p>
+                        Recent system activity
+                    </p>
+
+                </div>
+
+
+                <span class="live-badge">
+                    ● LIVE
+                </span>
+
+            </div>
+
+
+            <div class="activity-list">
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon blue-activity">
+                        🎫
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Ticket system online
+                        </strong>
+
+                        <small>
+                            Support center is operational
+                        </small>
+
+                        <span>
+                            Just now
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon green-activity">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Monitoring active
+                        </strong>
+
+                        <small>
+                            IT environment is being monitored
+                        </small>
+
+                        <span>
+                            Today
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon orange-activity">
+                        🔧
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Maintenance tracking
+                        </strong>
+
+                        <small>
+                            Equipment maintenance ready
+                        </small>
+
+                        <span>
+                            Today
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="activity-item">
+
+                    <div class="activity-icon purple-activity">
+                        🔐
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            System security
+                        </strong>
+
+                        <small>
+                            Security monitoring active
+                        </small>
+
+                        <span>
+                            Today
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer class="dashboard-footer">
+
+        <div>
+            © 2026 Fleetwood Lending Limited
+        </div>
+
+        <div>
+
+            IT Support Center
+
+            <span>
+                •
+            </span>
+
+            System Online
+
+            <i></i>
+
+        </div>
+
+    </footer>
+
+
+</main>
+
+</div>
+
+<!-- =====================================================
+     CREATE TICKET MODAL
+====================================================== -->
+
+<div
+    class="modal"
+    id="ticketModal"
+>
+
+<div class="modal-content">
+
+    <div class="modal-decoration"></div>
+
+
+    <div class="modal-header">
+
+        <div>
+
+            <div class="section-kicker">
+                FLEETWOOD IT SUPPORT
+            </div>
+
+            <h2>
+                Create New Ticket
+            </h2>
+
+            <p>
+                Tell us what you need help with.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            onclick="closeTicketForm()"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <form id="ticketForm">
+
+
+        <!-- REQUESTER -->
+
+        <label>
+
+            Requester Name
+
+            <input
+                type="text"
+                id="requesterName"
+                placeholder="Enter your name"
+                required
+            >
+
+        </label>
+
+
+        <!-- DEPARTMENT -->
+
+        <label>
+
+            Department
+
+            <select
+                id="department"
+                required
+            >
+
+                <option value="">
+                    Select department
+                </option>
+
+                <option>
+                    Accounts
+                </option>
+
+                <option>
+                    Collection
+                </option>
+
+                <option>
+                    Human Resources
+                </option>
+
+                <option>
+                    Marketing
+                </option>
+
+                <option>
+                    Operations
+                </option>
+
+                <option>
+                    IT
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- CATEGORY -->
+
+        <label>
+
+            Category
+
+            <select
+                id="category"
+                required
+            >
+
+                <option value="">
+                    Select category
+                </option>
+
+                <option>
+                    Hardware
+                </option>
+
+                <option>
+                    Software
+                </option>
+
+                <option>
+                    Network
+                </option>
+
+                <option>
+                    Email
+                </option>
+
+                <option>
+                    Printer
+                </option>
+
+                <option>
+                    Access / Password
+                </option>
+
+                <option>
+                    Other
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- PRIORITY -->
+
+        <label>
+
+            Priority
+
+            <select
+                id="priority"
+                required
+            >
+
+                <option>
+                    Normal
+                </option>
+
+                <option>
+                    Low
+                </option>
+
+                <option>
+                    High
+                </option>
+
+                <option>
+                    Critical
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- SUBJECT -->
+
+        <label>
+
+            Subject
+
+            <input
+                type="text"
+                id="subject"
+                placeholder="Brief description of the problem"
+                required
+            >
+
+        </label>
+
+
+        <!-- DESCRIPTION -->
+
+        <label>
+
+            Description
+
+            <textarea
+                id="description"
+                rows="5"
+                placeholder="Describe the problem in detail..."
+                required
+            ></textarea>
+
+        </label>
+
+
+        <!-- FORM ACTIONS -->
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeTicketForm()"
+            >
+
+                Cancel
+
+            </button>
+
+
+            <button
+                type="submit"
+                class="submit-btn"
+            >
+
+                Submit Ticket
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+</div>
+
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

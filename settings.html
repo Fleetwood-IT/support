@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings - Fleetwood IT Support</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* =====================================================
+           SETTINGS PAGE
+           ===================================================== */
+
+        .settings-page {
+            min-height: 100vh;
+            background: #f4f7fb;
+        }
+
+        .settings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .settings-header {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .settings-header h1 {
+            margin-bottom: 8px;
+            font-size: 28px;
+            color: #172033;
+        }
+
+        .settings-header p {
+            color: #687386;
+            font-size: 14px;
+        }
+
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 25px;
+        }
+
+        /* =====================================================
+           SETTINGS MENU
+           ===================================================== */
+
+        .settings-menu {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            height: fit-content;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .settings-menu button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: left;
+            padding: 14px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #4b5563;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .settings-menu button:hover {
+            background: #f1f5f9;
+        }
+
+        .settings-menu button.active {
+            background: #e8f1ff;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        /* =====================================================
+           SETTINGS CONTENT
+           ===================================================== */
+
+        .settings-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .settings-section h2 {
+            margin-bottom: 8px;
+            color: #172033;
+        }
+
+        .settings-section-description {
+            color: #687386;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* =====================================================
+           FORM
+           ===================================================== */
+
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .settings-group label {
+            margin-bottom: 7px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .settings-group input,
+        .settings-group select {
+            padding: 12px 14px;
+            border: 1px solid #d7dde7;
+            border-radius: 9px;
+            outline: none;
+            font-size: 14px;
+            background: white;
+        }
+
+        .settings-group input:focus,
+        .settings-group select:focus {
+            border-color: #2563eb;
+        }
+
+        .settings-group input:disabled {
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+
+        /* =====================================================
+           BUTTONS
+           ===================================================== */
+
+        .settings-actions {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .settings-btn {
+            border: none;
+            border-radius: 9px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .settings-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .settings-btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .settings-btn-secondary {
+            background: #eef2f7;
+            color: #374151;
+        }
+
+        /* =====================================================
+           TOGGLE SETTINGS
+           ===================================================== */
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #172033;
+        }
+
+        .setting-info span {
+            color: #687386;
+            font-size: 13px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: #cbd5e1;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .toggle-slider:before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 3px;
+            top: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: #2563eb;
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        /* =====================================================
+           INFORMATION CARDS
+           ===================================================== */
+
+        .system-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .info-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .info-card span {
+            display: block;
+            color: #687386;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .info-card strong {
+            color: #172033;
+        }
+
+        .danger-zone {
+            margin-top: 30px;
+            border: 1px solid #fecaca;
+            background: #fff7f7;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .danger-zone h3 {
+            color: #b91c1c;
+            margin-bottom: 7px;
+        }
+
+        .danger-zone p {
+            color: #7f1d1d;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* =====================================================
+           NOTIFICATION TOAST
+           ===================================================== */
+
+        #settingsNotification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 20000;
+        }
+
+        .settings-toast {
+            min-width: 300px;
+            max-width: 420px;
+            background: white;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #2563eb;
+        }
+
+        .settings-toast.success {
+            border-left-color: #16a34a;
+        }
+
+        .settings-toast.error {
+            border-left-color: #dc2626;
+        }
+
+        .settings-toast span {
+            font-weight: 900;
+        }
+
+        .settings-toast button {
+            margin-left: auto;
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (max-width: 850px) {
+
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-menu {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5px;
+            }
+
+            .settings-form-grid,
+            .system-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .settings-container {
+                padding: 15px;
+            }
+
+            .settings-content {
+                padding: 20px;
+            }
+
+            .settings-menu {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-group.full-width {
+                grid-column: auto;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="settings-page">
+
+    <!-- =====================================================
+         MAIN CONTAINER
+         ===================================================== -->
+
+    <div class="settings-container">
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <div class="settings-header">
+
+            <h1>⚙️ Settings</h1>
+
+            <p>
+                Manage your profile, security, notifications,
+                system preferences and IT Support system settings.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             SETTINGS LAYOUT
+             ================================================= -->
+
+        <div class="settings-layout">
+
+
+            <!-- =============================================
+                 SETTINGS MENU
+                 ============================================= -->
+
+            <div class="settings-menu">
+
+                <button
+                    class="settings-tab active"
+                    onclick="showSettingsSection('profile', this)">
+                    👤 Profile
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="showSettingsSection('security', this)">
+                    🔐 Security
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="showSettingsSection('notifications', this)">
+                    🔔 Notifications
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="showSettingsSection('preferences', this)">
+                    🖥️ Preferences
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="showSettingsSection('company', this)">
+                    🏢 Company
+                </button>
+
+                <button
+                    class="settings-tab"
+                    onclick="showSettingsSection('system', this)">
+                    ℹ️ System Information
+                </button>
+
+            </div>
+
+
+            <!-- =============================================
+                 SETTINGS CONTENT
+                 ============================================= -->
+
+            <div class="settings-content">
+
+
+                <!-- =========================================
+                     PROFILE
+                     ========================================= -->
+
+                <section
+                    id="profile"
+                    class="settings-section active">
+
+                    <h2>Profile Settings</h2>
+
+                    <p class="settings-section-description">
+                        View and manage your account information.
+                    </p>
+
+
+                    <div class="settings-form-grid">
+
+                        <div class="settings-group">
+
+                            <label for="fullName">
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="fullName"
+                                placeholder="Enter your full name">
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="email">
+                                Email Address
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                disabled>
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="role">
+                                Role
+                            </label>
+
+                            <input
+                                type="text"
+                                id="role"
+                                disabled>
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="department">
+                                Department
+                            </label>
+
+                            <input
+                                type="text"
+                                id="department"
+                                placeholder="Enter your department">
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-actions">
+
+                        <button
+                            class="settings-btn settings-btn-primary"
+                            id="saveProfileButton"
+                            onclick="saveProfile()">
+                            💾 Save Changes
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================================
+                     SECURITY
+                     ========================================= -->
+
+                <section
+                    id="security"
+                    class="settings-section">
+
+                    <h2>Security Settings</h2>
+
+                    <p class="settings-section-description">
+                        Update the password used to log in to this account.
+                    </p>
+
+
+                    <div class="settings-form-grid">
+
+                        <div class="settings-group">
+
+                            <label for="newPassword">
+                                New Password
+                            </label>
+
+                            <input
+                                type="password"
+                                id="newPassword"
+                                placeholder="Enter new password">
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="confirmPassword">
+                                Confirm New Password
+                            </label>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Confirm new password">
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-actions">
+
+                        <button
+                            class="settings-btn settings-btn-primary"
+                            id="changePasswordButton"
+                            onclick="changePassword()">
+                            🔐 Change Password
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================================
+                     NOTIFICATIONS
+                     ========================================= -->
+
+                <section
+                    id="notifications"
+                    class="settings-section">
+
+                    <h2>Notification Preferences</h2>
+
+                    <p class="settings-section-description">
+                        Choose which system notifications you want to receive.
+                        These preferences are saved on this device.
+                    </p>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <strong>
+                                New Ticket Notifications
+                            </strong>
+
+                            <span>
+                                Notify you when a new IT ticket is submitted.
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="newTicketNotifications"
+                                checked>
+
+                            <span class="toggle-slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <strong>
+                                Ticket Updates
+                            </strong>
+
+                            <span>
+                                Notify you when a ticket status changes.
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="ticketUpdates"
+                                checked>
+
+                            <span class="toggle-slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <strong>
+                                Maintenance Notifications
+                            </strong>
+
+                            <span>
+                                Receive notifications about scheduled maintenance.
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="maintenanceNotifications"
+                                checked>
+
+                            <span class="toggle-slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <strong>
+                                System Alerts
+                            </strong>
+
+                            <span>
+                                Receive important IT system alerts.
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="systemAlerts"
+                                checked>
+
+                            <span class="toggle-slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="settings-actions">
+
+                        <button
+                            class="settings-btn settings-btn-primary"
+                            onclick="saveNotifications()">
+                            💾 Save Notification Settings
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================================
+                     PREFERENCES
+                     ========================================= -->
+
+                <section
+                    id="preferences"
+                    class="settings-section">
+
+                    <h2>System Preferences</h2>
+
+                    <p class="settings-section-description">
+                        Configure how the IT Support system behaves on this device.
+                    </p>
+
+
+                    <div class="settings-form-grid">
+
+                        <div class="settings-group">
+
+                            <label for="language">
+                                Language
+                            </label>
+
+                            <select id="language">
+
+                                <option value="en">
+                                    English
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="timezone">
+                                Time Zone
+                            </label>
+
+                            <select id="timezone">
+
+                                <option value="Africa/Lagos">
+                                    West Africa Time (WAT)
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="dateFormat">
+                                Date Format
+                            </label>
+
+                            <select id="dateFormat">
+
+                                <option value="DD-MMM-YYYY">
+                                    08-Sep-2026
+                                </option>
+
+                                <option value="DD/MM/YYYY">
+                                    08/09/2026
+                                </option>
+
+                                <option value="MM/DD/YYYY">
+                                    09/08/2026
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="itemsPerPage">
+                                Items Per Page
+                            </label>
+
+                            <select id="itemsPerPage">
+
+                                <option value="10">
+                                    10
+                                </option>
+
+                                <option value="25" selected>
+                                    25
+                                </option>
+
+                                <option value="50">
+                                    50
+                                </option>
+
+                                <option value="100">
+                                    100
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-actions">
+
+                        <button
+                            class="settings-btn settings-btn-primary"
+                            onclick="savePreferences()">
+                            💾 Save Preferences
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================================
+                     COMPANY
+                     ========================================= -->
+
+                <section
+                    id="company"
+                    class="settings-section">
+
+                    <h2>Company Information</h2>
+
+                    <p class="settings-section-description">
+                        Shared organization information. Changes here apply
+                        for everyone using this system.
+                    </p>
+
+
+                    <div class="settings-form-grid">
+
+                        <div class="settings-group">
+
+                            <label for="companyName">
+                                Company Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="companyName"
+                                value="Fleetwood Lending Limited">
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="branchName">
+                                Branch
+                            </label>
+
+                            <input
+                                type="text"
+                                id="branchName"
+                                placeholder="Enter branch name">
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="supportEmail">
+                                IT Support Email
+                            </label>
+
+                            <input
+                                type="email"
+                                id="supportEmail"
+                                placeholder="Enter IT support email">
+
+                        </div>
+
+
+                        <div class="settings-group">
+
+                            <label for="supportPhone">
+                                IT Support Phone
+                            </label>
+
+                            <input
+                                type="text"
+                                id="supportPhone"
+                                placeholder="Enter IT support phone">
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-actions">
+
+                        <button
+                            class="settings-btn settings-btn-primary"
+                            id="saveCompanyButton"
+                            onclick="saveCompanySettings()">
+                            💾 Save Company Settings
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================================
+                     SYSTEM INFORMATION
+                     ========================================= -->
+
+                <section
+                    id="system"
+                    class="settings-section">
+
+                    <h2>System Information</h2>
+
+                    <p class="settings-section-description">
+                        Information about the Fleetwood IT Support Management System.
+                    </p>
+
+
+                    <div class="system-info">
+
+                        <div class="info-card">
+
+                            <span>
+                                System Name
+                            </span>
+
+                            <strong>
+                                Fleetwood IT Support Management System
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-card">
+
+                            <span>
+                                Version
+                            </span>
+
+                            <strong>
+                                Version 1.0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-card">
+
+                            <span>
+                                Platform
+                            </span>
+
+                            <strong>
+                                Web Application
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-card">
+
+                            <span>
+                                Database
+                            </span>
+
+                            <strong>
+                                Supabase
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-card">
+
+                            <span>
+                                Support Department
+                            </span>
+
+                            <strong>
+                                Information Technology
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-card">
+
+                            <span>
+                                Time Zone
+                            </span>
+
+                            <strong>
+                                West Africa Time (WAT)
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="danger-zone">
+
+                        <h3>
+                            🚪 Account
+                        </h3>
+
+                        <p>
+                            Sign out of the Fleetwood IT Support Management System.
+                        </p>
+
+                        <button
+                            class="settings-btn logout-btn"
+                            onclick="logoutUser()">
+                            🚪 Logout
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="settingsNotification"></div>
+
+
+<!-- =========================================================
+     SUPABASE
+     ========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- =========================================================
+     SETTINGS JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+    // =========================================================
+    // SUPABASE CONFIG
+    // =========================================================
+
+    const SUPABASE_URL =
+        "https://xcfobyusisjbfbnsohjz.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjZm9ieXVzaXNqYmZibnNvaGp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3ODc5NzEsImV4cCI6MjEwNDM2Mzk3MX0.ATSzb3RKqGDNPEL_YdORwBzsQJPMIqONzJJaG7LW9YU";
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
+
+    // =========================================================
+    // GLOBAL STATE
+    // =========================================================
+
+    let currentUser = null;
+    let currentProfile = null;
+
+
+    // =========================================================
+    // SHOW SETTINGS SECTION
+    // =========================================================
+
+    function showSettingsSection(sectionId, button) {
+
+        const sections =
+            document.querySelectorAll(".settings-section");
+
+        sections.forEach(function(section) {
+
+            section.classList.remove("active");
+
+        });
+
+
+        const tabs =
+            document.querySelectorAll(".settings-tab");
+
+        tabs.forEach(function(tab) {
+
+            tab.classList.remove("active");
+
+        });
+
+
+        const selectedSection =
+            document.getElementById(sectionId);
+
+        if (selectedSection) {
+
+            selectedSection.classList.add("active");
+
+        }
+
+
+        if (button) {
+
+            button.classList.add("active");
+
+        }
+
+    }
+
+
+    // =========================================================
+    // NOTIFICATION TOAST
+    // =========================================================
+
+    function showSettingsNotification(message, type = "success") {
+
+        const container =
+            document.getElementById("settingsNotification");
+
+        container.innerHTML = `
+
+            <div class="settings-toast ${type}">
+
+                <span>
+                    ${type === "success" ? "✓" : "!"}
+                </span>
+
+                <div>
+                    ${escapeHTML(message)}
+                </div>
+
+                <button
+                    type="button"
+                    onclick="this.parentElement.remove()">
+                    ×
+                </button>
+
+            </div>
+
+        `;
+
+        setTimeout(function () {
+
+            const toast =
+                container.querySelector(".settings-toast");
+
+            if (toast) {
+
+                toast.remove();
+
+            }
+
+        }, 4000);
+
+    }
+
+
+    // =========================================================
+    // ESCAPE HTML
+    // =========================================================
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    // =========================================================
+    // FORMAT ROLE
+    // =========================================================
+
+    function formatRole(role) {
+
+        const value =
+            String(role || "")
+                .trim()
+                .toLowerCase();
+
+        if (value === "it") {
+            return "IT Officer";
+        }
+
+        if (value === "manager") {
+            return "Manager";
+        }
+
+        if (value === "admin") {
+            return "Administrator";
+        }
+
+        return "Staff";
+
+    }
+
+
+    // =========================================================
+    // SESSION CHECK + LOAD PROFILE
+    // =========================================================
+
+    async function checkSettingsSession() {
+
+        const {
+            data: { session },
+            error
+        } = await supabaseClient.auth.getSession();
+
+        if (error || !session) {
+
+            window.location.href = "index.html";
+
+            return false;
+
+        }
+
+        currentUser = session.user;
+
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("user_profiles")
+            .select("*")
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+        if (profileError) {
+
+            console.error(
+                "Profile load error:",
+                profileError
+            );
+
+        }
+
+        currentProfile = profile || {};
+
+
+        // Populate profile section
+
+        document.getElementById("fullName").value =
+            currentProfile.full_name || "";
+
+        document.getElementById("email").value =
+            currentUser.email || "";
+
+        document.getElementById("role").value =
+            formatRole(currentProfile.role);
+
+        document.getElementById("department").value =
+            currentProfile.department || "";
+
+
+        return true;
+
+    }
+
+
+    // =========================================================
+    // SAVE PROFILE
+    // =========================================================
+
+    async function saveProfile() {
+
+        const button =
+            document.getElementById("saveProfileButton");
+
+        const fullName =
+            document.getElementById("fullName").value.trim();
+
+        const department =
+            document.getElementById("department").value.trim();
+
+
+        if (!fullName) {
+
+            showSettingsNotification(
+                "Please enter your full name.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        button.textContent = "Saving...";
+
+
+        try {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("user_profiles")
+                .update({
+                    full_name: fullName,
+                    department: department || null
+                })
+                .eq("id", currentUser.id);
+
+            if (error) {
+
+                throw error;
+
+            }
+
+            currentProfile.full_name = fullName;
+
+            currentProfile.department = department;
+
+            showSettingsNotification(
+                "Profile settings saved successfully.",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Save profile error:",
+                error
+            );
+
+            showSettingsNotification(
+                error.message ||
+                "Unable to save profile settings.",
+                "error"
+            );
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent = "💾 Save Changes";
+
+        }
+
+    }
+
+
+    // =========================================================
+    // CHANGE PASSWORD
+    // =========================================================
+
+    async function changePassword() {
+
+        const button =
+            document.getElementById("changePasswordButton");
+
+        const newPassword =
+            document.getElementById("newPassword").value;
+
+        const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+
+        if (!newPassword) {
+
+            showSettingsNotification(
+                "Please enter a new password.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (newPassword.length < 6) {
+
+            showSettingsNotification(
+                "Your new password must contain at least 6 characters.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (newPassword !== confirmPassword) {
+
+            showSettingsNotification(
+                "The new passwords do not match.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        button.textContent = "Updating...";
+
+
+        try {
+
+            const {
+                error
+            } = await supabaseClient.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+
+                throw error;
+
+            }
+
+            document.getElementById("newPassword").value = "";
+
+            document.getElementById("confirmPassword").value = "";
+
+            showSettingsNotification(
+                "Password updated successfully.",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Change password error:",
+                error
+            );
+
+            showSettingsNotification(
+                error.message ||
+                "Unable to update password.",
+                "error"
+            );
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent = "🔐 Change Password";
+
+        }
+
+    }
+
+
+    // =========================================================
+    // SAVE NOTIFICATIONS (per device — localStorage is fine here)
+    // =========================================================
+
+    function saveNotifications() {
+
+        localStorage.setItem(
+            "fleetwood_notification_settings",
+            JSON.stringify({
+
+                newTickets:
+                    document.getElementById(
+                        "newTicketNotifications"
+                    ).checked,
+
+                ticketUpdates:
+                    document.getElementById(
+                        "ticketUpdates"
+                    ).checked,
+
+                maintenance:
+                    document.getElementById(
+                        "maintenanceNotifications"
+                    ).checked,
+
+                alerts:
+                    document.getElementById(
+                        "systemAlerts"
+                    ).checked
+
+            })
+        );
+
+
+        showSettingsNotification(
+            "Notification settings saved successfully.",
+            "success"
+        );
+
+    }
+
+
+    // =========================================================
+    // SAVE PREFERENCES (per device — localStorage is fine here)
+    // =========================================================
+
+    function savePreferences() {
+
+        localStorage.setItem(
+            "fleetwood_system_preferences",
+            JSON.stringify({
+
+                language:
+                    document.getElementById(
+                        "language"
+                    ).value,
+
+                timezone:
+                    document.getElementById(
+                        "timezone"
+                    ).value,
+
+                dateFormat:
+                    document.getElementById(
+                        "dateFormat"
+                    ).value,
+
+                itemsPerPage:
+                    document.getElementById(
+                        "itemsPerPage"
+                    ).value
+
+            })
+        );
+
+
+        showSettingsNotification(
+            "System preferences saved successfully.",
+            "success"
+        );
+
+    }
+
+
+    // =========================================================
+    // LOAD COMPANY SETTINGS (shared, from Supabase)
+    // =========================================================
+
+    async function loadCompanySettings() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("company_settings")
+            .select("*")
+            .eq("id", 1)
+            .maybeSingle();
+
+        if (error) {
+
+            console.error(
+                "Load company settings error:",
+                error
+            );
+
+            return;
+
+        }
+
+        if (!data) {
+            return;
+        }
+
+        document.getElementById("companyName").value =
+            data.company_name || "";
+
+        document.getElementById("branchName").value =
+            data.branch || "";
+
+        document.getElementById("supportEmail").value =
+            data.support_email || "";
+
+        document.getElementById("supportPhone").value =
+            data.support_phone || "";
+
+    }
+
+
+    // =========================================================
+    // SAVE COMPANY SETTINGS (shared, to Supabase)
+    // =========================================================
+
+    async function saveCompanySettings() {
+
+        const button =
+            document.getElementById("saveCompanyButton");
+
+        const companyName =
+            document.getElementById("companyName").value.trim();
+
+        const branch =
+            document.getElementById("branchName").value.trim();
+
+        const supportEmail =
+            document.getElementById("supportEmail").value.trim();
+
+        const supportPhone =
+            document.getElementById("supportPhone").value.trim();
+
+
+        button.disabled = true;
+
+        button.textContent = "Saving...";
+
+
+        try {
+
+            const {
+                error
+            } = await supabaseClient
+                .from("company_settings")
+                .update({
+                    company_name: companyName || null,
+                    branch: branch || null,
+                    support_email: supportEmail || null,
+                    support_phone: supportPhone || null,
+                    updated_at: new Date().toISOString()
+                })
+                .eq("id", 1);
+
+            if (error) {
+
+                throw error;
+
+            }
+
+            showSettingsNotification(
+                "Company settings saved successfully.",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Save company settings error:",
+                error
+            );
+
+            showSettingsNotification(
+                error.message ||
+                "Unable to save company settings.",
+                "error"
+            );
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent = "💾 Save Company Settings";
+
+        }
+
+    }
+
+
+    // =========================================================
+    // LOGOUT (real Supabase sign out)
+    // =========================================================
+
+    async function logoutUser() {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to logout?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await supabaseClient.auth.signOut();
+
+        } catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+        }
+
+        window.location.href =
+            "index.html";
+
+    }
+
+
+    // =========================================================
+    // LOAD SAVED DEVICE SETTINGS
+    // =========================================================
+
+    function loadDeviceSettings() {
+
+        try {
+
+            const notifications =
+                JSON.parse(
+                    localStorage.getItem(
+                        "fleetwood_notification_settings"
+                    )
+                );
+
+            if (notifications) {
+
+                document.getElementById(
+                    "newTicketNotifications"
+                ).checked =
+                    notifications.newTickets;
+
+                document.getElementById(
+                    "ticketUpdates"
+                ).checked =
+                    notifications.ticketUpdates;
+
+                document.getElementById(
+                    "maintenanceNotifications"
+                ).checked =
+                    notifications.maintenance;
+
+                document.getElementById(
+                    "systemAlerts"
+                ).checked =
+                    notifications.alerts;
+
+            }
+
+
+            const preferences =
+                JSON.parse(
+                    localStorage.getItem(
+                        "fleetwood_system_preferences"
+                    )
+                );
+
+            if (preferences) {
+
+                document.getElementById(
+                    "language"
+                ).value =
+                    preferences.language;
+
+                document.getElementById(
+                    "timezone"
+                ).value =
+                    preferences.timezone;
+
+                document.getElementById(
+                    "dateFormat"
+                ).value =
+                    preferences.dateFormat;
+
+                document.getElementById(
+                    "itemsPerPage"
+                ).value =
+                    preferences.itemsPerPage;
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Unable to load device settings:",
+                error
+            );
+
+        }
+
+    }
+
+
+    // =========================================================
+    // INITIAL LOAD
+    // =========================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        async function() {
+
+            const allowed =
+                await checkSettingsSession();
+
+            if (!allowed) {
+                return;
+            }
+
+            loadDeviceSettings();
+
+            await loadCompanySettings();
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Reports | Fleetwood IT Support Center</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* =====================================================
+           REPORTS PAGE - only what isn't already covered
+           by the shared stylesheet
+           ===================================================== */
+
+        .report-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .report-controls select,
+        .report-controls input {
+            padding: 10px 12px;
+            border: 1px solid var(--border, #d9e1ec);
+            border-radius: 9px;
+            background: #fff;
+            color: #172033;
+            font-size: 12px;
+            min-height: 41px;
+        }
+
+        .report-period {
+            color: #8b98a8;
+            font-size: 11px;
+        }
+
+        .empty-report {
+            text-align: center;
+            padding: 25px;
+            color: #94a3b8;
+        }
+
+        .report-header-print {
+            display: none;
+        }
+
+        .report-notification {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            z-index: 9999;
+            padding: 14px 18px;
+            border-radius: 10px;
+            background: #172033;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+            display: none;
+            max-width: 350px;
+            font-size: 13px;
+        }
+
+        .report-notification.success {
+            background: #15803d;
+        }
+
+        .report-notification.error {
+            background: #dc2626;
+        }
+
+        @media (max-width: 650px) {
+            .report-controls {
+                width: 100%;
+            }
+        }
+
+        @media print {
+
+            body {
+                background: white !important;
+            }
+
+            .sidebar,
+            .topbar-actions,
+            button {
+                display: none !important;
+            }
+
+            .app {
+                display: block !important;
+            }
+
+            .main {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .report-header-print {
+                display: block;
+                text-align: center;
+                margin-bottom: 25px;
+            }
+
+            .card,
+            .stat-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+    <aside class="sidebar">
+
+        <div class="sidebar-glow"></div>
+
+        <div class="logo">
+            <div class="logo-icon">F</div>
+            <div class="logo-text">
+                <strong>Fleetwood</strong>
+                <span>IT Support Center</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-title">MAIN MENU</div>
+
+            <a href="dashboard.html">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="tickets.html">
+                <span>🎫</span>
+                <span>Tickets</span>
+            </a>
+
+            <div class="nav-section-title">MANAGEMENT</div>
+
+            <a href="assets.html">
+                <span>💻</span>
+                <span>IT Assets</span>
+            </a>
+
+            <a href="staff-directory.html">
+                <span>👥</span>
+                <span>Staff Directory</span>
+            </a>
+
+            <a href="maintenance.html">
+                <span>🔧</span>
+                <span>Maintenance</span>
+            </a>
+
+            <a href="reports.html" class="active">
+                <span>📈</span>
+                <span>Reports</span>
+            </a>
+
+            <div class="nav-section-title">SYSTEM</div>
+
+            <a href="knowledge-base.html">
+                <span>📚</span>
+                <span>Knowledge Base</span>
+            </a>
+
+            <a href="notifications.html">
+                <span>🔔</span>
+                <span>Notifications</span>
+            </a>
+
+            <a href="settings.html">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <div class="support-status">
+                <span class="status-dot"></span>
+                <span>IT System Online</span>
+            </div>
+
+            <div class="user-mini">
+                <div class="user-avatar" id="reportUserAvatar">IT</div>
+                <div>
+                    <strong id="reportUserName">Loading...</strong>
+                    <small id="reportUserRole">Loading...</small>
+                </div>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div>
+                <div class="breadcrumb">
+                    Fleetwood Lending Limited
+                    <span>›</span>
+                    Reports
+                </div>
+                <h1>Reports</h1>
+                <p>IT Support management reports.</p>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="btn btn-secondary" onclick="logoutReports()">
+                    Logout
+                </button>
+            </div>
+
+        </header>
+
+
+        <!-- REPORT CONTROLS -->
+        <section class="card">
+
+            <div class="report-controls">
+
+                <select id="reportPeriod">
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month" selected>This Month</option>
+                    <option value="year">This Year</option>
+                    <option value="all">All Time</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+
+                <input type="date" id="reportStartDate" style="display:none;">
+
+                <input type="date" id="reportEndDate" style="display:none;">
+
+                <button type="button" class="btn btn-secondary" onclick="loadReports()">
+                    🔄 Refresh
+                </button>
+
+                <button type="button" class="btn btn-primary" onclick="exportWordReport()">
+                    📝 Word
+                </button>
+
+                <button type="button" class="btn btn-primary" onclick="exportExcelReport()">
+                    📊 Excel
+                </button>
+
+                <button type="button" class="btn btn-secondary" onclick="printReport()">
+                    🖨️ Print
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRINT HEADER -->
+        <div class="report-header-print">
+            <h1>FLEETWOOD LENDING LIMITED</h1>
+            <h2>IT SUPPORT MANAGEMENT REPORT</h2>
+            <p id="printReportPeriod">Reporting Period</p>
+        </div>
+
+
+        <!-- =====================================================
+             SUMMARY
+        ====================================================== -->
+        <section class="stats">
+
+            <div class="stat-card stat-blue">
+                <div class="stat-top">
+                    <div class="stat-icon">🎫</div>
+                    <span class="stat-arrow">↗</span>
+                </div>
+                <div class="stat-info">
+                    <span>Total Tickets</span>
+                    <h2 id="reportTotalTickets">0</h2>
+                    <small>Support requests</small>
+                </div>
+            </div>
+
+            <div class="stat-card stat-green">
+                <div class="stat-top">
+                    <div class="stat-icon">✅</div>
+                    <span class="stat-arrow">↗</span>
+                </div>
+                <div class="stat-info">
+                    <span>Tickets Treated</span>
+                    <h2 id="reportTreatedTickets">0</h2>
+                    <small>Resolved / completed</small>
+                </div>
+            </div>
+
+            <div class="stat-card stat-orange">
+                <div class="stat-top">
+                    <div class="stat-icon">👥</div>
+                    <span class="stat-arrow">↗</span>
+                </div>
+                <div class="stat-info">
+                    <span>Active Staff</span>
+                    <h2 id="reportActiveStaff">0</h2>
+                    <small>Current employees</small>
+                </div>
+            </div>
+
+            <div class="stat-card stat-blue">
+                <div class="stat-top">
+                    <div class="stat-icon">💻</div>
+                    <span class="stat-arrow">↗</span>
+                </div>
+                <div class="stat-info">
+                    <span>Total Assets</span>
+                    <h2 id="reportTotalAssets">0</h2>
+                    <small>IT equipment</small>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TICKET REPORT
+        ====================================================== -->
+        <section class="card">
+
+            <div class="card-header">
+                <h2>🎫 Ticket Report</h2>
+                <p>Ticket activity for the selected period</p>
+            </div>
+
+            <section class="stats">
+
+                <div class="stat-card stat-blue">
+                    <div class="stat-top"><div class="stat-icon">📂</div></div>
+                    <div class="stat-info">
+                        <span>Open</span>
+                        <h2 id="reportOpenTickets">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-orange">
+                    <div class="stat-top"><div class="stat-icon">⏳</div></div>
+                    <div class="stat-info">
+                        <span>Pending Approval</span>
+                        <h2 id="reportPendingTickets">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-red">
+                    <div class="stat-top"><div class="stat-icon">✖️</div></div>
+                    <div class="stat-info">
+                        <span>Rejected</span>
+                        <h2 id="reportRejectedTickets">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-red">
+                    <div class="stat-top"><div class="stat-icon">🔥</div></div>
+                    <div class="stat-info">
+                        <span>High Priority</span>
+                        <h2 id="reportHighPriorityTickets">0</h2>
+                    </div>
+                </div>
+
+            </section>
+
+        </section>
+
+
+        <!-- =====================================================
+             STAFF REPORT
+        ====================================================== -->
+        <section class="card">
+
+            <div class="card-header">
+                <h2>👥 Staff Report</h2>
+                <p>Current staff and device information</p>
+            </div>
+
+            <section class="stats">
+
+                <div class="stat-card stat-blue">
+                    <div class="stat-top"><div class="stat-icon">👥</div></div>
+                    <div class="stat-info">
+                        <span>Total Staff</span>
+                        <h2 id="reportStaffTotal">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-green">
+                    <div class="stat-top"><div class="stat-icon">✅</div></div>
+                    <div class="stat-info">
+                        <span>Active</span>
+                        <h2 id="reportStaffActive">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-red">
+                    <div class="stat-top"><div class="stat-icon">🚪</div></div>
+                    <div class="stat-info">
+                        <span>Resigned</span>
+                        <h2 id="reportStaffResigned">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-orange">
+                    <div class="stat-top"><div class="stat-icon">🔄</div></div>
+                    <div class="stat-info">
+                        <span>Device Changes</span>
+                        <h2 id="reportDeviceChanges">0</h2>
+                    </div>
+                </div>
+
+            </section>
+
+        </section>
+
+
+        <!-- =====================================================
+             ASSET REPORT
+        ====================================================== -->
+        <section class="card">
+
+            <div class="card-header">
+                <h2>💻 IT Assets Report</h2>
+                <p>Current IT equipment status</p>
+            </div>
+
+            <section class="stats">
+
+                <div class="stat-card stat-blue">
+                    <div class="stat-top"><div class="stat-icon">💻</div></div>
+                    <div class="stat-info">
+                        <span>Total Assets</span>
+                        <h2 id="reportAssetsTotal">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-green">
+                    <div class="stat-top"><div class="stat-icon">✅</div></div>
+                    <div class="stat-info">
+                        <span>Good</span>
+                        <h2 id="reportAssetsGood">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-red">
+                    <div class="stat-top"><div class="stat-icon">⚠️</div></div>
+                    <div class="stat-info">
+                        <span>Faulty</span>
+                        <h2 id="reportAssetsFaulty">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-orange">
+                    <div class="stat-top"><div class="stat-icon">👤</div></div>
+                    <div class="stat-info">
+                        <span>In Use</span>
+                        <h2 id="reportAssetsUsed">0</h2>
+                    </div>
+                </div>
+
+            </section>
+
+            <div class="table-container" style="margin-top:20px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Asset Type</th>
+                            <th>Total</th>
+                            <th>Good</th>
+                            <th>Faulty</th>
+                            <th>In Use</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assetReportBody">
+                        <tr>
+                            <td colspan="5" class="empty-report">No asset data available.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             MAINTENANCE REPORT
+        ====================================================== -->
+        <section class="card">
+
+            <div class="card-header">
+                <h2>🔧 Maintenance Report</h2>
+                <p>Maintenance activities</p>
+            </div>
+
+            <section class="stats">
+
+                <div class="stat-card stat-blue">
+                    <div class="stat-top"><div class="stat-icon">🔧</div></div>
+                    <div class="stat-info">
+                        <span>Total</span>
+                        <h2 id="reportMaintenanceTotal">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-orange">
+                    <div class="stat-top"><div class="stat-icon">⏳</div></div>
+                    <div class="stat-info">
+                        <span>Pending</span>
+                        <h2 id="reportMaintenancePending">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-blue">
+                    <div class="stat-top"><div class="stat-icon">⚙️</div></div>
+                    <div class="stat-info">
+                        <span>In Progress</span>
+                        <h2 id="reportMaintenanceProgress">0</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-green">
+                    <div class="stat-top"><div class="stat-icon">✅</div></div>
+                    <div class="stat-info">
+                        <span>Completed</span>
+                        <h2 id="reportMaintenanceCompleted">0</h2>
+                    </div>
+                </div>
+
+            </section>
+
+        </section>
+
+
+        <!-- =====================================================
+             BRANCH REPORT
+        ====================================================== -->
+        <section class="card">
+
+            <div class="card-header">
+                <h2>🏢 Branch Asset Summary</h2>
+                <p>Number of IT assets by branch</p>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Branch</th>
+                            <th>Total Assets</th>
+                            <th>Good</th>
+                            <th>Faulty</th>
+                            <th>In Use</th>
+                            <th>Available</th>
+                        </tr>
+                    </thead>
+                    <tbody id="branchReportBody">
+                        <tr>
+                            <td colspan="6" class="empty-report">No branch data available.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             REPORT INFO
+        ====================================================== -->
+        <section class="card">
+
+            <div class="card-header">
+                <h2>📋 Report Information</h2>
+            </div>
+
+            <div id="reportInformation">
+                <p>
+                    <strong>Generated:</strong>
+                    <span id="reportGeneratedDate">-</span>
+                </p>
+                <p style="margin-top:8px;">
+                    <strong>Reporting Period:</strong>
+                    <span id="reportPeriodText">-</span>
+                </p>
+            </div>
+
+        </section>
+
+        <footer class="footer">
+            <span>Fleetwood Lending Limited</span>
+            <span>IT Support Management System</span>
+        </footer>
+
+    </main>
+
+</div>
+
+
+<div id="reportNotification" class="report-notification"></div>
+
+
+<!-- =========================================================
+     SUPABASE
+========================================================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- =========================================================
+     REPORTS JAVASCRIPT
+========================================================== -->
+<script src="reports.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Staff Directory | Fleetwood IT Support Center</title>
+
+    <!-- MAIN SYSTEM STYLE -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =====================================================
+           STAFF DIRECTORY PAGE
+        ===================================================== */
+
+        .staff-page {
+            padding: 24px;
+        }
+
+        /* =====================================================
+           PAGE HEADER
+        ===================================================== */
+
+        .staff-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .staff-page-title h1 {
+            margin: 0 0 6px;
+            font-size: 28px;
+        }
+
+        .staff-page-title p {
+            margin: 0;
+            color: #718096;
+        }
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .primary-btn {
+            border: none;
+            padding: 11px 18px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: 700;
+            background: #2563eb;
+            color: white;
+            transition: 0.2s ease;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+        }
+
+        .secondary-btn {
+            border: 1px solid #d9e1ec;
+            padding: 11px 18px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: 700;
+            background: white;
+            color: #334155;
+        }
+
+        .danger-btn {
+            background: #fee2e2 !important;
+            color: #b91c1c !important;
+        }
+
+        .small-btn {
+            border: 1px solid #d9e1ec;
+            background: white;
+            padding: 7px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+
+        .small-btn:hover {
+            background: #f1f5f9;
+        }
+
+        /* =====================================================
+           SUMMARY CARDS
+        ===================================================== */
+
+        .staff-summary-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .staff-summary-card {
+            background: white;
+            border: 1px solid #e6ebf2;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+        }
+
+        .staff-summary-label {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .staff-summary-number {
+            font-size: 30px;
+            font-weight: 800;
+            color: #172033;
+        }
+
+        /* =====================================================
+           FILTER BAR
+        ===================================================== */
+
+        .staff-filter-card {
+            background: white;
+            border: 1px solid #e6ebf2;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+        }
+
+        .staff-filter-grid {
+            display: grid;
+            grid-template-columns:
+                2fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        .staff-filter-grid input,
+        .staff-filter-grid select {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid #d9e1ec;
+            border-radius: 8px;
+            outline: none;
+            background: white;
+        }
+
+        .staff-filter-grid input:focus,
+        .staff-filter-grid select:focus {
+            border-color: #2563eb;
+        }
+
+        /* =====================================================
+           TABLE CARD
+        ===================================================== */
+
+        .staff-table-card {
+            background: white;
+            border: 1px solid #e6ebf2;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+        }
+
+        .staff-table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            border-bottom: 1px solid #edf1f5;
+        }
+
+        .staff-table-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        #staffRecordCount {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .staff-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        .staff-table th {
+            text-align: left;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12px;
+            padding: 14px;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        .staff-table td {
+            padding: 14px;
+            border-bottom: 1px solid #edf1f5;
+            font-size: 13px;
+            color: #334155;
+            vertical-align: middle;
+        }
+
+        .staff-table tr:hover td {
+            background: #fafcff;
+        }
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-resigned {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* =====================================================
+           ACTION BUTTONS
+        ===================================================== */
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .history-count {
+            border: none;
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 800;
+            padding: 5px 9px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        /* =====================================================
+           MODAL
+        ===================================================== */
+
+        .staff-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.58);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .staff-modal.active {
+            display: flex;
+        }
+
+        .staff-modal-content {
+            width: 100%;
+            max-width: 760px;
+            max-height: 92vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .staff-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #edf1f5;
+        }
+
+        .staff-modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .close-modal {
+            border: none;
+            background: transparent;
+            font-size: 25px;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .staff-modal-body {
+            padding: 24px;
+        }
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .staff-form-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid #d9e1ec;
+            border-radius: 8px;
+            outline: none;
+            background: white;
+        }
+
+        .form-group textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #2563eb;
+        }
+
+        .staff-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 18px 24px;
+            border-top: 1px solid #edf1f5;
+        }
+
+        /* =====================================================
+           NOTIFICATION
+        ===================================================== */
+
+        #staffNotification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 20000;
+        }
+
+        .staff-notification {
+            min-width: 320px;
+            max-width: 450px;
+            background: white;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #2563eb;
+        }
+
+        .staff-notification.success {
+            border-left-color: #16a34a;
+        }
+
+        .staff-notification.error {
+            border-left-color: #dc2626;
+        }
+
+        .staff-notification span {
+            font-weight: 900;
+        }
+
+        .staff-notification button {
+            margin-left: auto;
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .staff-summary-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            .staff-page {
+                padding: 15px;
+            }
+
+            .staff-page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .staff-filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .staff-summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .staff-form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ===================================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- LOGO -->
+        <div class="sidebar-logo">
+
+            <div class="logo-icon">
+                F
+            </div>
+
+            <div>
+                <strong>FLEETWOOD</strong>
+                <small>IT SUPPORT CENTER</small>
+            </div>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+        <nav class="sidebar-nav">
+
+
+            <a href="dashboard.html">
+
+                <span class="nav-icon">📊</span>
+
+                <div>
+                    <strong>Dashboard</strong>
+                    <small>IT overview</small>
+                </div>
+
+            </a>
+
+
+            <a
+                href="dashboard.html"
+                onclick="
+                    if(typeof openTicketForm === 'function'){
+                        openTicketForm();
+                        return false;
+                    }
+                "
+            >
+
+                <span class="nav-icon">🎫</span>
+
+                <div>
+                    <strong>New Ticket</strong>
+                    <small>Report an issue</small>
+                </div>
+
+            </a>
+
+
+            <!-- ACTIVE -->
+            <a
+                href="staff-directory.html"
+                class="active"
+            >
+
+                <span class="nav-icon">👥</span>
+
+                <div>
+                    <strong>Staff Directory</strong>
+                    <small>Staff & devices</small>
+                </div>
+
+            </a>
+
+
+            <a href="assets.html">
+
+                <span class="nav-icon">💻</span>
+
+                <div>
+                    <strong>IT Assets</strong>
+                    <small>Systems & gadgets</small>
+                </div>
+
+            </a>
+
+
+            <a href="maintenance.html">
+
+                <span class="nav-icon">🔧</span>
+
+                <div>
+                    <strong>Maintenance</strong>
+                    <small>Repairs & service</small>
+                </div>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="nav-icon">📈</span>
+
+                <div>
+                    <strong>Reports</strong>
+                    <small>IT reports</small>
+                </div>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="nav-icon">📚</span>
+
+                <div>
+                    <strong>Knowledge Base</strong>
+                    <small>IT solutions</small>
+                </div>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="nav-icon">🔔</span>
+
+                <div>
+                    <strong>Notifications</strong>
+                    <small>System alerts</small>
+                </div>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="nav-icon">⚙️</span>
+
+                <div>
+                    <strong>Settings</strong>
+                    <small>System settings</small>
+                </div>
+
+            </a>
+
+
+        </nav>
+
+
+        <!-- USER FOOTER -->
+        <div class="sidebar-user">
+
+            <div
+                class="user-avatar"
+                id="staffUserAvatar"
+            >
+                U
+            </div>
+
+            <div class="user-info">
+
+                <strong id="staffUserName">
+                    User
+                </strong>
+
+                <small id="staffUserRole">
+                    User
+                </small>
+
+            </div>
+
+            <button
+                type="button"
+                onclick="window.logoutStaff()"
+                title="Logout"
+            >
+                🚪
+            </button>
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ===================================================== -->
+
+    <main class="main">
+
+
+        <!-- =================================================
+             TOP BAR
+        ================================================= -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    Staff Directory
+                </h1>
+
+                <p>
+                    Manage staff records and assigned devices
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <button
+                    type="button"
+                    class="primary-btn"
+                    id="topAddStaffButton"
+                    onclick="window.openStaffForm()"
+                >
+                    ➕ Add Staff
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             PAGE
+        ================================================= -->
+
+        <section class="staff-page">
+
+
+            <!-- =================================================
+                 PAGE HEADER
+            ================================================= -->
+
+            <!-- =================================================
+                 SUMMARY
+            ================================================= -->
+
+            <div class="staff-summary-grid">
+
+
+                <div class="staff-summary-card">
+
+                    <div class="staff-summary-label">
+                        Total Staff
+                    </div>
+
+                    <div
+                        class="staff-summary-number"
+                        id="totalStaff"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="staff-summary-card">
+
+                    <div class="staff-summary-label">
+                        Active Staff
+                    </div>
+
+                    <div
+                        class="staff-summary-number"
+                        id="activeStaff"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="staff-summary-card">
+
+                    <div class="staff-summary-label">
+                        Resigned Staff
+                    </div>
+
+                    <div
+                        class="staff-summary-number"
+                        id="resignedStaff"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="staff-summary-card">
+
+                    <div class="staff-summary-label">
+                        Device Changes
+                    </div>
+
+                    <div
+                        class="staff-summary-number"
+                        id="totalDeviceChanges"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 FILTERS
+            ================================================= -->
+
+            <div class="staff-filter-card">
+
+                <div class="staff-filter-grid">
+
+
+                    <input
+                        type="text"
+                        id="staffSearch"
+                        placeholder="Search staff, department, phone or serial number..."
+                    >
+
+
+                    <select
+                        id="staffDepartmentFilter"
+                    >
+
+                        <option value="">
+                            All Departments
+                        </option>
+
+                    </select>
+
+
+                    <select
+                        id="staffStatusFilter"
+                    >
+
+                        <option value="">
+                            All Status
+                        </option>
+
+                        <option value="Active">
+                            Active
+                        </option>
+
+                        <option value="Resigned">
+                            Resigned
+                        </option>
+
+                    </select>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STAFF TABLE
+            ================================================= -->
+
+            <div class="staff-table-card">
+
+
+                <div class="staff-table-header">
+
+                    <h2>
+                        Staff Records
+                    </h2>
+
+                    <span id="staffRecordCount">
+                        0 records
+                    </span>
+
+                </div>
+
+
+                <div class="staff-table-wrapper">
+
+                    <table class="staff-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Staff Name
+                                </th>
+
+                                <th>
+                                    Department
+                                </th>
+
+                                <th>
+                                    Phone
+                                </th>
+
+                                <th>
+                                    Laptop
+                                </th>
+
+                                <th>
+                                    Serial Number
+                                </th>
+
+                                <th>
+                                    Other Gadgets
+                                </th>
+
+                                <th>
+                                    Changes
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="staffTableBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="9"
+                                    style="
+                                        text-align:center;
+                                        padding:40px;
+                                    "
+                                >
+                                    Loading staff records...
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+<!-- =========================================================
+     ADD / EDIT STAFF MODAL
+========================================================= -->
+
+<div
+    class="staff-modal"
+    id="staffModal"
+>
+
+
+    <div class="staff-modal-content">
+
+
+        <!-- HEADER -->
+
+        <div class="staff-modal-header">
+
+            <h2 id="staffModalTitle">
+                Add Staff
+            </h2>
+
+            <button
+                type="button"
+                class="close-modal"
+                onclick="window.closeStaffForm()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <form
+            id="staffForm"
+            autocomplete="off"
+        >
+
+
+            <div class="staff-modal-body">
+
+
+                <input
+                    type="hidden"
+                    id="staffId"
+                    name="staffId"
+                >
+
+
+                <div class="staff-form-grid">
+
+
+                    <!-- STAFF NAME -->
+
+                    <div class="form-group">
+
+                        <label for="staffName">
+                            Staff Name *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="staffName"
+                            name="staffName"
+                            placeholder="Enter staff full name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DEPARTMENT -->
+
+                    <div class="form-group">
+
+                        <label for="staffDepartment">
+                            Department *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="staffDepartment"
+                            name="staffDepartment"
+                            placeholder="e.g. Finance, Operations, HR"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PHONE -->
+
+                    <div class="form-group">
+
+                        <label for="staffPhone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="staffPhone"
+                            name="staffPhone"
+                            placeholder="Enter phone number"
+                        >
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="form-group">
+
+                        <label for="staffStatus">
+                            Staff Status
+                        </label>
+
+                        <select
+                            id="staffStatus"
+                            name="staffStatus"
+                        >
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Resigned">
+                                Resigned
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- LAPTOP -->
+
+                    <div class="form-group">
+
+                        <label for="currentLaptop">
+                            Current Laptop
+                        </label>
+
+                        <input
+                            type="text"
+                            id="currentLaptop"
+                            name="currentLaptop"
+                            placeholder="e.g. Dell Latitude 5420"
+                        >
+
+                    </div>
+
+
+                    <!-- SERIAL -->
+
+                    <div class="form-group">
+
+                        <label for="laptopSerial">
+                            Laptop Serial Number
+                        </label>
+
+                        <input
+                            type="text"
+                            id="laptopSerial"
+                            name="laptopSerial"
+                            placeholder="Enter serial number"
+                        >
+
+                    </div>
+
+
+                    <!-- ASSET TAG -->
+
+                    <div class="form-group">
+
+                        <label for="laptopAssetTag">
+                            Laptop Asset Tag
+                        </label>
+
+                        <input
+                            type="text"
+                            id="laptopAssetTag"
+                            name="laptopAssetTag"
+                            placeholder="Enter asset tag"
+                        >
+
+                    </div>
+
+
+                    <!-- OTHER GADGETS -->
+
+                    <div class="form-group">
+
+                        <label for="otherGadgets">
+                            Other Gadgets
+                        </label>
+
+                        <input
+                            type="text"
+                            id="otherGadgets"
+                            name="otherGadgets"
+                            placeholder="e.g. Mouse, Charger, Headset"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="staff-modal-footer">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="window.closeStaffForm()"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                    id="staffSubmitButton"
+                >
+                    Save Staff
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     DEVICE HISTORY MODAL
+========================================================= -->
+
+<div
+    class="staff-modal"
+    id="deviceHistoryModal"
+>
+
+
+    <div
+        class="staff-modal-content"
+        style="max-width:1100px;"
+    >
+
+
+        <!-- HEADER -->
+
+        <div class="staff-modal-header">
+
+            <div>
+
+                <h2>
+                    Device Change History
+                </h2>
+
+                <p
+                    id="historyStaffName"
+                    style="
+                        margin:5px 0 0;
+                        color:#64748b;
+                    "
+                >
+                    Staff
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="close-modal"
+                onclick="window.closeDeviceHistory()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- BODY -->
+
+        <div class="staff-modal-body">
+
+
+            <div
+                id="historyAddButtonContainer"
+                style="
+                    display:none;
+                    margin-bottom:16px;
+                "
+            >
+
+                <button
+                    type="button"
+                    class="primary-btn"
+                    id="addDeviceChangeButton"
+                    onclick="window.openDeviceChangeForm()"
+                >
+                    ➕ Record Device Change
+                </button>
+
+            </div>
+
+
+            <div class="staff-table-wrapper">
+
+
+                <table class="staff-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Gadget
+                            </th>
+
+                            <th>
+                                Old Device
+                            </th>
+
+                            <th>
+                                Serial Number
+                            </th>
+
+                            <th>
+                                Asset Tag
+                            </th>
+
+                            <th>
+                                Reason
+                            </th>
+
+                            <th>
+                                Change Date
+                            </th>
+
+                            <th>
+                                Notes
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="deviceHistoryBody">
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                style="
+                                    text-align:center;
+                                    padding:35px;
+                                "
+                            >
+                                No device history.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     DEVICE CHANGE MODAL
+========================================================= -->
+
+<div
+    class="staff-modal"
+    id="deviceChangeModal"
+>
+
+
+    <div
+        class="staff-modal-content"
+        style="max-width:760px;"
+    >
+
+
+        <!-- HEADER -->
+
+        <div class="staff-modal-header">
+
+            <h2 id="deviceChangeModalTitle">
+                Record Device Change
+            </h2>
+
+            <button
+                type="button"
+                class="close-modal"
+                onclick="window.closeDeviceChangeForm()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- FORM -->
+
+        <form
+            id="deviceChangeForm"
+            autocomplete="off"
+        >
+
+
+            <div class="staff-modal-body">
+
+
+                <input
+                    type="hidden"
+                    id="deviceChangeId"
+                    name="deviceChangeId"
+                >
+
+
+                <input
+                    type="hidden"
+                    id="deviceChangeStaffId"
+                    name="deviceChangeStaffId"
+                >
+
+
+                <div class="staff-form-grid">
+
+
+                    <!-- GADGET TYPE -->
+
+                    <div class="form-group">
+
+                        <label for="gadgetType">
+                            Gadget Type *
+                        </label>
+
+                        <select
+                            id="gadgetType"
+                            name="gadgetType"
+                            required
+                        >
+
+                            <option value="">
+                                Select gadget
+                            </option>
+
+                            <option value="Laptop">
+                                Laptop
+                            </option>
+
+                            <option value="Desktop">
+                                Desktop
+                            </option>
+
+                            <option value="Monitor">
+                                Monitor
+                            </option>
+
+                            <option value="Charger">
+                                Charger
+                            </option>
+
+                            <option value="Mouse">
+                                Mouse
+                            </option>
+
+                            <option value="Keyboard">
+                                Keyboard
+                            </option>
+
+                            <option value="Headset">
+                                Headset
+                            </option>
+
+                            <option value="Phone">
+                                Phone
+                            </option>
+
+                            <option value="Tablet">
+                                Tablet
+                            </option>
+
+                            <option value="Router">
+                                Router
+                            </option>
+
+                            <option value="Printer">
+                                Printer
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CHANGE DATE -->
+
+                    <div class="form-group">
+
+                        <label for="changeDate">
+                            Change Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            id="changeDate"
+                            name="changeDate"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- OLD DEVICE -->
+
+                    <div class="form-group">
+
+                        <label for="oldDeviceName">
+                            Old Device Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="oldDeviceName"
+                            name="oldDeviceName"
+                            placeholder="e.g. Dell Latitude 5400"
+                        >
+
+                    </div>
+
+
+                    <!-- OLD SERIAL -->
+
+                    <div class="form-group">
+
+                        <label for="oldSerialNumber">
+                            Old Serial Number
+                        </label>
+
+                        <input
+                            type="text"
+                            id="oldSerialNumber"
+                            name="oldSerialNumber"
+                            placeholder="Enter old serial number"
+                        >
+
+                    </div>
+
+
+                    <!-- OLD ASSET TAG -->
+
+                    <div class="form-group">
+
+                        <label for="oldAssetTag">
+                            Old Asset Tag
+                        </label>
+
+                        <input
+                            type="text"
+                            id="oldAssetTag"
+                            name="oldAssetTag"
+                            placeholder="Enter old asset tag"
+                        >
+
+                    </div>
+
+
+                    <!-- REASON -->
+
+                    <div class="form-group">
+
+                        <label for="changeReason">
+                            Reason for Change
+                        </label>
+
+                        <input
+                            type="text"
+                            id="changeReason"
+                            name="changeReason"
+                            placeholder="e.g. Faulty, Upgrade, Replacement"
+                        >
+
+                    </div>
+
+
+                    <!-- NOTES -->
+
+                    <div class="form-group full-width">
+
+                        <label for="changeNotes">
+                            Notes
+                        </label>
+
+                        <textarea
+                            id="changeNotes"
+                            name="changeNotes"
+                            placeholder="Add any additional information..."
+                        ></textarea>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="staff-modal-footer">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="window.closeDeviceChangeForm()"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                    id="deviceChangeSubmitButton"
+                >
+                    Save Change
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     NOTIFICATIONS
+========================================================= -->
+
+<div id="staffNotification"></div>
+
+
+<!-- =========================================================
+     SUPABASE
+========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- =========================================================
+     STAFF DIRECTORY JAVASCRIPT
+========================================================= -->
+
+<script src="staff-directory.js"></script>
+
+
+</body>
+
+</html>

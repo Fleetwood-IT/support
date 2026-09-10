@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Fleetwood IT Support - Maintenance</title>
+
+<link
+    rel="stylesheet"
+    href="style.css"
+>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =====================================================
+     SIDEBAR
+====================================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-glow"></div>
+
+
+    <!-- LOGO -->
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            <span>F</span>
+        </div>
+
+        <div class="logo-text">
+
+            <h2>Fleetwood</h2>
+
+            <span>
+                IT Support Center
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- MAIN MENU -->
+
+    <div class="nav-label">
+        MAIN MENU
+    </div>
+
+
+    <nav>
+
+
+        <!-- DASHBOARD -->
+
+        <a href="dashboard.html">
+
+            <span class="nav-icon">
+                ▦
+            </span>
+
+            <div>
+
+                <strong>
+                    Dashboard
+                </strong>
+
+                <small>
+                    Overview
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- TICKETS -->
+
+        <a href="tickets.html">
+
+            <span class="nav-icon">
+                🎫
+            </span>
+
+            <div>
+
+                <strong>
+                    Tickets
+                </strong>
+
+                <small>
+                    Support requests
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- NEW TICKET -->
+
+        <a
+            href="dashboard.html"
+            
+        >
+
+            <span class="nav-icon">
+                ＋
+            </span>
+
+            <div>
+
+                <strong>
+                    New Ticket
+                </strong>
+
+                <small>
+                    Report an issue
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- USERS -->
+
+        <a href="#">
+
+            <span class="nav-icon">
+                👥
+            </span>
+
+            <div>
+
+                <strong>
+                    Users
+                </strong>
+
+                <small>
+                    Staff directory
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- MANAGEMENT -->
+
+        <div class="nav-label nav-label-space">
+            MANAGEMENT
+        </div>
+
+
+        <!-- IT ASSETS -->
+
+        <a href="assets.html">
+
+            <span class="nav-icon">
+                💻
+            </span>
+
+            <div>
+
+                <strong>
+                    IT Assets
+                </strong>
+
+                <small>
+                    Company devices
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- MAINTENANCE -->
+
+        <a
+            href="maintenance.html"
+            class="active"
+        >
+
+            <span class="nav-icon">
+                🔧
+            </span>
+
+            <div>
+
+                <strong>
+                    Maintenance
+                </strong>
+
+                <small>
+                    Repairs & service
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- REPORTS -->
+
+        <a href="#">
+
+            <span class="nav-icon">
+                📊
+            </span>
+
+            <div>
+
+                <strong>
+                    Reports
+                </strong>
+
+                <small>
+                    IT analytics
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- SYSTEM -->
+
+        <div class="nav-label nav-label-space">
+            SYSTEM
+        </div>
+
+
+        <!-- KNOWLEDGE BASE -->
+
+        <a href="#">
+
+            <span class="nav-icon">
+                📚
+            </span>
+
+            <div>
+
+                <strong>
+                    Knowledge Base
+                </strong>
+
+                <small>
+                    IT guides
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- NOTIFICATIONS -->
+
+        <a href="#">
+
+            <span class="nav-icon notification-icon">
+
+                🔔
+
+                <b>
+                    3
+                </b>
+
+            </span>
+
+            <div>
+
+                <strong>
+                    Notifications
+                </strong>
+
+                <small>
+                    Recent activity
+                </small>
+
+            </div>
+
+        </a>
+
+
+        <!-- SETTINGS -->
+
+        <a href="#">
+
+            <span class="nav-icon">
+                ⚙
+            </span>
+
+            <div>
+
+                <strong>
+                    Settings
+                </strong>
+
+                <small>
+                    System settings
+                </small>
+
+            </div>
+
+        </a>
+
+
+    </nav>
+
+
+    <!-- SIDEBAR FOOTER -->
+
+    <div class="sidebar-bottom">
+
+
+        <div class="support-status">
+
+            <span class="status-dot"></span>
+
+            <div>
+
+                <strong>
+                    IT Support Online
+                </strong>
+
+                <small>
+                    Available for assistance
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="user-mini">
+
+            <div class="avatar">
+                IT
+            </div>
+
+            <div>
+
+                <strong id="maintenanceUserName">
+                    IT Officer
+                </strong>
+
+                <small id="maintenanceUserRole">
+                    Administrator
+                </small>
+
+            </div>
+
+            <span
+                class="user-more"
+                title="Logout"
+                style="cursor:pointer;"
+                onclick="logoutMaintenance()"
+            >
+                ⋮
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+====================================================== -->
+
+<main class="main">
+
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+
+        <div class="page-heading">
+
+
+            <div class="breadcrumb">
+
+                Fleetwood Lending Limited
+
+                <span>
+                    ›
+                </span>
+
+                IT Support
+
+                <span>
+                    ›
+                </span>
+
+                Maintenance
+
+            </div>
+
+
+            <h1>
+                Equipment Maintenance 🔧
+            </h1>
+
+
+            <p>
+                Track repairs, servicing and equipment maintenance.
+            </p>
+
+
+        </div>
+
+
+
+        <div class="topbar-actions">
+
+
+            <button
+                type="button"
+                class="icon-button"
+                title="Logout"
+                onclick="logoutMaintenance()"
+            >
+
+                🚪
+
+            </button>
+
+
+            <button
+                type="button"
+                class="new-ticket-btn"
+                onclick="openMaintenanceForm()"
+            >
+
+                <span>
+                    ＋
+                </span>
+
+                New Maintenance
+
+            </button>
+
+
+        </div>
+
+
+    </header>
+
+
+
+    <!-- =================================================
+         MAINTENANCE SUMMARY
+    ================================================== -->
+
+    <section class="stats">
+
+
+        <!-- TOTAL -->
+
+        <div class="stat-card stat-blue">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    🔧
+                </div>
+
+                <span class="stat-arrow">
+                    ↗
+                </span>
+
+            </div>
+
+            <div class="stat-info">
+
+                <span>
+                    Total Records
+                </span>
+
+                <h2 id="totalMaintenance">
+                    0
+                </h2>
+
+                <small>
+                    Maintenance records
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- PENDING -->
+
+        <div class="stat-card stat-orange">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <span class="stat-arrow">
+                    ↗
+                </span>
+
+            </div>
+
+            <div class="stat-info">
+
+                <span>
+                    Pending
+                </span>
+
+                <h2 id="pendingMaintenance">
+                    0
+                </h2>
+
+                <small>
+                    Awaiting repair
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- IN PROGRESS -->
+
+        <div class="stat-card stat-red">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    ⚙
+                </div>
+
+                <span class="stat-arrow">
+                    ↗
+                </span>
+
+            </div>
+
+            <div class="stat-info">
+
+                <span>
+                    In Progress
+                </span>
+
+                <h2 id="progressMaintenance">
+                    0
+                </h2>
+
+                <small>
+                    Currently being repaired
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMPLETED -->
+
+        <div class="stat-card stat-green">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+                    ✓
+                </div>
+
+                <span class="stat-arrow">
+                    ↗
+                </span>
+
+            </div>
+
+            <div class="stat-info">
+
+                <span>
+                    Completed
+                </span>
+
+                <h2 id="completedMaintenance">
+                    0
+                </h2>
+
+                <small>
+                    Successfully completed
+                </small>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         MAINTENANCE PANEL
+    ================================================== -->
+
+    <section class="panel" style="margin-top:24px;">
+
+
+        <div class="panel-header">
+
+
+            <div>
+
+                <div class="section-kicker">
+                    EQUIPMENT SERVICE
+                </div>
+
+                <h2>
+                    Maintenance Records
+                </h2>
+
+                <p>
+                    View and manage equipment repairs and servicing.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="view-btn"
+                onclick="loadMaintenance()"
+            >
+                ↻ Refresh
+            </button>
+
+
+        </div>
+
+
+
+        <!-- FILTERS -->
+
+        <div
+            style="
+                display:grid;
+                grid-template-columns:repeat(4, 1fr);
+                gap:14px;
+                padding:0 24px 20px;
+            "
+        >
+
+
+            <input
+                type="text"
+                id="maintenanceSearch"
+                placeholder="Search asset, technician..."
+            >
+
+
+            <select id="maintenanceStatusFilter">
+
+                <option value="">
+                    All Status
+                </option>
+
+                <option value="Pending">
+                    Pending
+                </option>
+
+                <option value="In Progress">
+                    In Progress
+                </option>
+
+                <option value="Completed">
+                    Completed
+                </option>
+
+                <option value="Cancelled">
+                    Cancelled
+                </option>
+
+            </select>
+
+
+            <select id="maintenanceTypeFilter">
+
+                <option value="">
+                    All Maintenance Types
+                </option>
+
+                <option value="Repair">
+                    Repair
+                </option>
+
+                <option value="Servicing">
+                    Servicing
+                </option>
+
+                <option value="Upgrade">
+                    Upgrade
+                </option>
+
+                <option value="Inspection">
+                    Inspection
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+
+            <select id="maintenancePriorityFilter">
+
+                <option value="">
+                    All Priority
+                </option>
+
+                <option value="Low">
+                    Low
+                </option>
+
+                <option value="Normal">
+                    Normal
+                </option>
+
+                <option value="High">
+                    High
+                </option>
+
+                <option value="Critical">
+                    Critical
+                </option>
+
+            </select>
+
+
+        </div>
+
+
+
+        <!-- TABLE -->
+
+        <div class="table-container">
+
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Asset
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Problem / Service
+                        </th>
+
+                        <th>
+                            Technician
+                        </th>
+
+                        <th>
+                            Priority
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="maintenanceTableBody">
+
+
+                    <tr>
+
+                        <td colspan="9">
+                            Loading maintenance records...
+                        </td>
+
+                    </tr>
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         MAINTENANCE HISTORY
+    ================================================== -->
+
+    <section
+        class="panel"
+        style="margin-top:24px;"
+    >
+
+
+        <div class="panel-header">
+
+
+            <div>
+
+                <div class="section-kicker">
+                    SERVICE HISTORY
+                </div>
+
+                <h2>
+                    Recent Completed Maintenance
+                </h2>
+
+                <p>
+                    Recently completed equipment repairs and servicing.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="table-container">
+
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Asset
+                        </th>
+
+                        <th>
+                            Service
+                        </th>
+
+                        <th>
+                            Technician
+                        </th>
+
+                        <th>
+                            Cost
+                        </th>
+
+                        <th>
+                            Completed
+                        </th>
+
+                        <th>
+                            Notes
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="maintenanceHistoryBody">
+
+
+                    <tr>
+
+                        <td colspan="6">
+                            Loading history...
+                        </td>
+
+                    </tr>
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- FOOTER -->
+
+    <footer class="dashboard-footer">
+
+
+        <div>
+            © 2026 Fleetwood Lending Limited
+        </div>
+
+
+        <div>
+
+            IT Support Center
+
+            <span>
+                •
+            </span>
+
+            System Online
+
+            <i></i>
+
+        </div>
+
+
+    </footer>
+
+
+</main>
+
+</div>
+
+<!-- =====================================================
+     NEW MAINTENANCE MODAL
+====================================================== -->
+
+<div
+    class="modal"
+    id="maintenanceModal"
+>
+
+<div class="modal-content">
+
+
+    <div class="modal-decoration"></div>
+
+
+    <div class="modal-header">
+
+
+        <div>
+
+            <div class="section-kicker">
+                FLEETWOOD IT SUPPORT
+            </div>
+
+            <h2>
+                New Maintenance Record
+            </h2>
+
+            <p>
+                Record an equipment repair or service.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            onclick="closeMaintenanceForm()"
+        >
+            ×
+        </button>
+
+
+    </div>
+
+
+
+    <form id="maintenanceForm">
+
+
+        <!-- HIDDEN ID -->
+
+        <input
+            type="hidden"
+            id="maintenanceId"
+        >
+
+
+        <!-- ASSET -->
+
+        <label>
+
+            Asset
+
+            <select
+                id="maintenanceAsset"
+                required
+            >
+
+                <option value="">
+                    Select asset
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- MAINTENANCE TYPE -->
+
+        <label>
+
+            Maintenance Type
+
+            <select
+                id="maintenanceType"
+                required
+            >
+
+                <option value="">
+                    Select type
+                </option>
+
+                <option value="Repair">
+                    Repair
+                </option>
+
+                <option value="Servicing">
+                    Servicing
+                </option>
+
+                <option value="Upgrade">
+                    Upgrade
+                </option>
+
+                <option value="Inspection">
+                    Inspection
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- PROBLEM -->
+
+        <label>
+
+            Problem / Service Description
+
+            <input
+                type="text"
+                id="maintenanceProblem"
+                placeholder="e.g. Laptop not powering on"
+                required
+            >
+
+        </label>
+
+
+        <!-- TECHNICIAN -->
+
+        <label>
+
+            Technician / Service Provider
+
+            <input
+                type="text"
+                id="maintenanceTechnician"
+                placeholder="Enter technician name"
+            >
+
+        </label>
+
+
+        <!-- PRIORITY -->
+
+        <label>
+
+            Priority
+
+            <select
+                id="maintenancePriority"
+                required
+            >
+
+                <option value="Normal">
+                    Normal
+                </option>
+
+                <option value="Low">
+                    Low
+                </option>
+
+                <option value="High">
+                    High
+                </option>
+
+                <option value="Critical">
+                    Critical
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- STATUS -->
+
+        <label>
+
+            Status
+
+            <select
+                id="maintenanceStatus"
+                required
+            >
+
+                <option value="Pending">
+                    Pending
+                </option>
+
+                <option value="In Progress">
+                    In Progress
+                </option>
+
+                <option value="Completed">
+                    Completed
+                </option>
+
+                <option value="Cancelled">
+                    Cancelled
+                </option>
+
+            </select>
+
+        </label>
+
+
+        <!-- DATE -->
+
+        <label>
+
+            Date Reported
+
+            <input
+                type="date"
+                id="maintenanceDate"
+                required
+            >
+
+        </label>
+
+
+        <!-- EXPECTED COMPLETION -->
+
+        <label>
+
+            Expected Completion Date
+
+            <input
+                type="date"
+                id="expectedCompletionDate"
+            >
+
+        </label>
+
+
+        <!-- COMPLETION DATE -->
+
+        <label>
+
+            Actual Completion Date
+
+            <input
+                type="date"
+                id="actualCompletionDate"
+            >
+
+        </label>
+
+
+        <!-- COST -->
+
+        <label>
+
+            Repair / Service Cost
+
+            <input
+                type="number"
+                id="maintenanceCost"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+            >
+
+        </label>
+
+
+        <!-- NOTES -->
+
+        <label>
+
+            Notes
+
+            <textarea
+                id="maintenanceNotes"
+                rows="5"
+                placeholder="Additional information about the repair or service..."
+            ></textarea>
+
+        </label>
+
+
+
+        <!-- ACTIONS -->
+
+        <div class="form-actions">
+
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeMaintenanceForm()"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="submit"
+                class="submit-btn"
+                id="maintenanceSubmitButton"
+            >
+                Save Maintenance
+            </button>
+
+
+        </div>
+
+
+    </form>
+
+
+</div>
+
+</div>
+
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- MAINTENANCE JAVASCRIPT -->
+
+<script src="maintenance.js"></script>
+
+</body>
+
+</html>
