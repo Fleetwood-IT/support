@@ -1,7 +1,7 @@
 // =====================================================
 // FLEETWOOD IT SUPPORT CENTER
 // IT ASSET MANAGEMENT
-// VERSION 1.0
+// VERSION 1.2
 // =====================================================
 
 
@@ -35,6 +35,8 @@ let editingAssetId = null;
 
 let isSaving = false;
 
+let searchDebounceTimer = null;
+
 
 // =====================================================
 // INITIALIZE
@@ -46,6 +48,7 @@ document.addEventListener(
 
         setupAssetForm();
         setupAssetFilters();
+        setupAssetTableActions();
 
         const allowed =
             await checkAssetSession();
@@ -62,6 +65,14 @@ document.addEventListener(
 
 // =====================================================
 // SESSION CHECK
+//
+// NOTE: This only controls what the UI shows/hides.
+// It is NOT a security boundary. The anon key used above
+// can call the Supabase REST API directly from devtools,
+// bypassing all of this. Real enforcement must live in
+// Postgres Row Level Security policies on the "assets"
+// and "user_profiles" tables (write policies restricted
+// to role = 'it', etc). See the accompanying RLS SQL.
 // =====================================================
 
 async function checkAssetSession() {
@@ -148,7 +159,8 @@ async function checkAssetSession() {
         }
 
 
-        // Save information
+        // Save information (UI convenience only — never
+        // trust this for permission checks)
         localStorage.setItem(
             "fleetwoodRole",
             role
@@ -367,7 +379,7 @@ async function loadAssets() {
         );
 
 
-        renderBranchSummary(
+        renderDepartmentSummary(
             allAssets
         );
 
@@ -400,6 +412,50 @@ async function loadAssets() {
         }
 
     }
+
+}
+
+
+// =====================================================
+// FIELD HELPERS
+//
+// The "assets" table has historically used a couple of
+// different column names for the same concept (a leftover
+// from an earlier schema). These helpers centralize the
+// fallback logic in one place instead of repeating
+// `a || b` everywhere. Writes always use the canonical
+// name (asset_type, asset_name, condition).
+// =====================================================
+
+function getAssetType(asset) {
+
+    return (
+        asset.asset_type ||
+        asset.type ||
+        "Other"
+    );
+
+}
+
+
+function getAssetName(asset) {
+
+    return (
+        asset.asset_name ||
+        asset.name ||
+        "-"
+    );
+
+}
+
+
+function getAssetCondition(asset) {
+
+    return (
+        asset.condition ||
+        asset.asset_condition ||
+        "Good"
+    );
 
 }
 
@@ -453,9 +509,7 @@ function renderAssets(
             asset => {
 
                 const condition =
-                    asset.condition ||
-                    asset.asset_condition ||
-                    "Good";
+                    getAssetCondition(asset);
 
 
                 const status =
@@ -464,7 +518,7 @@ function renderAssets(
 
 
                 return `
-                    <tr>
+                    <tr data-row-id="${escapeHTML(String(asset.id))}">
 
                         <td>
                             <strong>
@@ -480,18 +534,14 @@ function renderAssets(
 
                         <td>
                             ${escapeHTML(
-                                asset.asset_type ||
-                                asset.type ||
-                                "Other"
+                                getAssetType(asset)
                             )}
                         </td>
 
 
                         <td>
                             ${escapeHTML(
-                                asset.asset_name ||
-                                asset.name ||
-                                "-"
+                                getAssetName(asset)
                             )}
                         </td>
 
@@ -506,7 +556,7 @@ function renderAssets(
 
                         <td>
                             ${escapeHTML(
-                                asset.branch ||
+                                asset.department ||
                                 "-"
                             )}
                         </td>
@@ -552,21 +602,24 @@ function renderAssets(
                                 canEdit
                                     ? `
                                         <button
+                                            type="button"
                                             class="btn btn-small"
-                                            onclick="editAsset('${escapeHTML(String(asset.id))}')">
+                                            data-action="edit">
                                             Edit
                                         </button>
 
                                         <button
+                                            type="button"
                                             class="btn btn-small btn-danger"
-                                            onclick="deleteAsset('${escapeHTML(String(asset.id))}')">
+                                            data-action="delete">
                                             Delete
                                         </button>
                                       `
                                     : `
                                         <button
+                                            type="button"
                                             class="btn btn-small"
-                                            onclick="viewAsset('${escapeHTML(String(asset.id))}')">
+                                            data-action="view">
                                             View
                                         </button>
                                       `
@@ -579,6 +632,88 @@ function renderAssets(
 
             }
         ).join("");
+
+}
+
+
+// =====================================================
+// TABLE ACTIONS (event delegation)
+//
+// Buttons no longer carry inline onclick="...('id')"
+// handlers. Embedding a value inside a hand-built
+// onclick string is fragile — the browser HTML-decodes
+// the attribute before it runs as JS, so HTML-escaping
+// alone does not make it safe against a stray quote in
+// the value. Using data-* attributes + one delegated
+// listener avoids the problem entirely and is also less
+// code.
+// =====================================================
+
+function setupAssetTableActions() {
+
+    const body =
+        document.getElementById(
+            "assetsTableBody"
+        );
+
+
+    if (!body) {
+        return;
+    }
+
+
+    body.addEventListener(
+        "click",
+        event => {
+
+            const button =
+                event.target.closest(
+                    "[data-action]"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const row =
+                button.closest(
+                    "[data-row-id]"
+                );
+
+
+            if (!row) {
+                return;
+            }
+
+
+            const id =
+                row.dataset.rowId;
+
+
+            const action =
+                button.dataset.action;
+
+
+            if (action === "edit") {
+                editAsset(id);
+            } else if (action === "delete") {
+                deleteAsset(id);
+            } else if (action === "view") {
+                viewAsset(id);
+            }
+
+        }
+    );
+
+
+    const departmentBody =
+        document.getElementById(
+            "departmentAssetsBody"
+        );
+
+    void departmentBody;
 
 }
 
@@ -701,11 +836,7 @@ function updateAssetStatistics(
     const good =
         assets.filter(
             asset =>
-                String(
-                    asset.condition ||
-                    asset.asset_condition ||
-                    ""
-                ).toLowerCase()
+                getAssetCondition(asset).toLowerCase()
                 === "good"
         ).length;
 
@@ -713,11 +844,7 @@ function updateAssetStatistics(
     const faulty =
         assets.filter(
             asset =>
-                String(
-                    asset.condition ||
-                    asset.asset_condition ||
-                    ""
-                ).toLowerCase()
+                getAssetCondition(asset).toLowerCase()
                 === "faulty"
         ).length;
 
@@ -783,16 +910,16 @@ function setText(
 
 
 // =====================================================
-// BRANCH SUMMARY
+// DEPARTMENT SUMMARY
 // =====================================================
 
-function renderBranchSummary(
+function renderDepartmentSummary(
     assets
 ) {
 
     const body =
         document.getElementById(
-            "branchAssetsBody"
+            "departmentAssetsBody"
         );
 
 
@@ -801,20 +928,20 @@ function renderBranchSummary(
     }
 
 
-    const branches = {};
+    const departments = {};
 
 
     assets.forEach(
         asset => {
 
-            const branch =
-                asset.branch ||
+            const department =
+                asset.department ||
                 "Unassigned";
 
 
-            if (!branches[branch]) {
+            if (!departments[department]) {
 
-                branches[branch] = {
+                departments[department] = {
 
                     total: 0,
                     good: 0,
@@ -827,15 +954,11 @@ function renderBranchSummary(
             }
 
 
-            branches[branch].total++;
+            departments[department].total++;
 
 
             const condition =
-                String(
-                    asset.condition ||
-                    asset.asset_condition ||
-                    ""
-                ).toLowerCase();
+                getAssetCondition(asset).toLowerCase();
 
 
             const status =
@@ -849,8 +972,8 @@ function renderBranchSummary(
                 condition === "good"
             ) {
 
-                branches[
-                    branch
+                departments[
+                    department
                 ].good++;
 
             }
@@ -860,8 +983,8 @@ function renderBranchSummary(
                 condition === "faulty"
             ) {
 
-                branches[
-                    branch
+                departments[
+                    department
                 ].faulty++;
 
             }
@@ -871,8 +994,8 @@ function renderBranchSummary(
                 status === "in use"
             ) {
 
-                branches[
-                    branch
+                departments[
+                    department
                 ].inUse++;
 
             }
@@ -882,8 +1005,8 @@ function renderBranchSummary(
                 status === "available"
             ) {
 
-                branches[
-                    branch
+                departments[
+                    department
                 ].available++;
 
             }
@@ -894,7 +1017,7 @@ function renderBranchSummary(
 
     const names =
         Object.keys(
-            branches
+            departments
         ).sort();
 
 
@@ -903,7 +1026,7 @@ function renderBranchSummary(
         body.innerHTML = `
             <tr>
                 <td colspan="6">
-                    No branch information available.
+                    No department information available.
                 </td>
             </tr>
         `;
@@ -915,10 +1038,10 @@ function renderBranchSummary(
 
     body.innerHTML =
         names.map(
-            branch => {
+            department => {
 
                 const item =
-                    branches[branch];
+                    departments[department];
 
 
                 return `
@@ -927,7 +1050,7 @@ function renderBranchSummary(
                         <td>
                             <strong>
                                 ${escapeHTML(
-                                    branch
+                                    department
                                 )}
                             </strong>
                         </td>
@@ -963,6 +1086,12 @@ function renderBranchSummary(
 
 // =====================================================
 // FILTERS
+//
+// The search box is debounced so typing quickly doesn't
+// re-filter/re-render on every keystroke. The <select>
+// filters only need "change" — listening for both
+// "input" and "change" on a <select> can fire the handler
+// twice for a single selection in some browsers.
 // =====================================================
 
 function setupAssetFilters() {
@@ -991,8 +1120,29 @@ function setupAssetFilters() {
         );
 
 
+    if (search) {
+
+        search.addEventListener(
+            "input",
+            () => {
+
+                clearTimeout(
+                    searchDebounceTimer
+                );
+
+                searchDebounceTimer =
+                    setTimeout(
+                        filterAssets,
+                        200
+                    );
+
+            }
+        );
+
+    }
+
+
     [
-        search,
         type,
         condition,
         status
@@ -1000,11 +1150,6 @@ function setupAssetFilters() {
         element => {
 
             if (element) {
-
-                element.addEventListener(
-                    "input",
-                    filterAssets
-                );
 
                 element.addEventListener(
                     "change",
@@ -1061,17 +1206,13 @@ function filterAssets() {
 
                     asset.asset_tag,
 
-                    asset.asset_name,
+                    getAssetName(asset),
 
-                    asset.name,
-
-                    asset.asset_type,
-
-                    asset.type,
+                    getAssetType(asset),
 
                     asset.serial_number,
 
-                    asset.branch,
+                    asset.department,
 
                     asset.assigned_to
 
@@ -1088,36 +1229,19 @@ function filterAssets() {
                     );
 
 
-                const assetType =
-                    asset.asset_type ||
-                    asset.type ||
-                    "";
-
-
-                const assetCondition =
-                    asset.condition ||
-                    asset.asset_condition ||
-                    "";
-
-
-                const assetStatus =
-                    asset.status ||
-                    "";
-
-
                 const matchesType =
                     !type ||
-                    assetType === type;
+                    getAssetType(asset) === type;
 
 
                 const matchesCondition =
                     !condition ||
-                    assetCondition === condition;
+                    getAssetCondition(asset) === condition;
 
 
                 const matchesStatus =
                     !status ||
-                    assetStatus === status;
+                    (asset.status || "") === status;
 
 
                 return (
@@ -1207,6 +1331,22 @@ function openAssetForm() {
         "";
 
 
+    // Show the quick-add accessory options
+    // (only relevant when creating a new asset)
+
+    const accessoryRow =
+        document.getElementById(
+            "accessoryQuickAdd"
+        );
+
+    if (accessoryRow) {
+
+        accessoryRow.style.display =
+            "flex";
+
+    }
+
+
     const modal =
         document.getElementById(
             "assetModal"
@@ -1264,6 +1404,12 @@ function closeAssetForm() {
 
 // =====================================================
 // SAVE ASSET
+//
+// NOTE: the `role !== "it"` check below is a UX guard,
+// not a security guard. Anyone editing localStorage or
+// calling the Supabase client directly from the console
+// can skip this file entirely. The real guard has to be
+// a Postgres RLS policy on the "assets" table.
 // =====================================================
 
 async function saveAsset(
@@ -1324,22 +1470,22 @@ async function saveAsset(
             serial_number:
                 document.getElementById(
                     "serialNumber"
-                ).value.trim(),
+                ).value.trim() || null,
 
             asset_tag:
                 document.getElementById(
                     "assetTag"
-                ).value.trim(),
+                ).value.trim() || null,
 
-            branch:
+            department:
                 document.getElementById(
-                    "assetBranch"
+                    "assetDepartment"
                 ).value.trim(),
 
             assigned_to:
                 document.getElementById(
                     "assignedTo"
-                ).value.trim(),
+                ).value.trim() || null,
 
             condition:
                 document.getElementById(
@@ -1354,7 +1500,7 @@ async function saveAsset(
             notes:
                 document.getElementById(
                     "assetNotes"
-                ).value.trim()
+                ).value.trim() || null
 
         };
 
@@ -1362,7 +1508,7 @@ async function saveAsset(
         if (
             !assetData.asset_type ||
             !assetData.asset_name ||
-            !assetData.branch
+            !assetData.department
         ) {
 
             showAssetNotification(
@@ -1423,6 +1569,20 @@ async function saveAsset(
                         assetData
                     ]);
 
+
+            // -------------------------------------------------
+            // QUICK-ADD ACCESSORIES
+            // (mouse / charger, same staff + department)
+            // -------------------------------------------------
+
+            if (!result.error) {
+
+                await createQuickAccessories(
+                    assetData
+                );
+
+            }
+
         }
 
 
@@ -1477,6 +1637,126 @@ async function saveAsset(
                 "Save Asset";
 
         }
+
+    }
+
+}
+
+
+// =====================================================
+// CREATE QUICK ACCESSORIES (MOUSE / CHARGER)
+// =====================================================
+
+async function createQuickAccessories(
+    mainAssetData
+) {
+
+    const wantsMouse =
+        document.getElementById(
+            "assignMouse"
+        )?.checked;
+
+
+    const wantsCharger =
+        document.getElementById(
+            "assignCharger"
+        )?.checked;
+
+
+    const extras = [];
+
+
+    if (wantsMouse) {
+
+        extras.push({
+
+            asset_type: "Mouse",
+
+            asset_name: "Mouse",
+
+            serial_number: null,
+
+            asset_tag: null,
+
+            department:
+                mainAssetData.department,
+
+            assigned_to:
+                mainAssetData.assigned_to,
+
+            condition: "Good",
+
+            status:
+                mainAssetData.status ||
+                "In Use",
+
+            notes:
+                "Added automatically with " +
+                (mainAssetData.asset_name || "main asset")
+
+        });
+
+    }
+
+
+    if (wantsCharger) {
+
+        extras.push({
+
+            asset_type: "Charger",
+
+            asset_name: "Charger",
+
+            serial_number: null,
+
+            asset_tag: null,
+
+            department:
+                mainAssetData.department,
+
+            assigned_to:
+                mainAssetData.assigned_to,
+
+            condition: "Good",
+
+            status:
+                mainAssetData.status ||
+                "In Use",
+
+            notes:
+                "Added automatically with " +
+                (mainAssetData.asset_name || "main asset")
+
+        });
+
+    }
+
+
+    if (!extras.length) {
+        return;
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("assets")
+            .insert(extras);
+
+
+    if (error) {
+
+        console.error(
+            "Quick accessory error:",
+            error
+        );
+
+        showAssetNotification(
+            "Main asset saved, but the mouse/charger could not be added: " +
+            error.message,
+            "error"
+        );
 
     }
 
@@ -1549,17 +1829,13 @@ function editAsset(
     document.getElementById(
         "assetType"
     ).value =
-        asset.asset_type ||
-        asset.type ||
-        "";
+        getAssetType(asset);
 
 
     document.getElementById(
         "assetName"
     ).value =
-        asset.asset_name ||
-        asset.name ||
-        "";
+        getAssetName(asset) === "-" ? "" : getAssetName(asset);
 
 
     document.getElementById(
@@ -1577,9 +1853,9 @@ function editAsset(
 
 
     document.getElementById(
-        "assetBranch"
+        "assetDepartment"
     ).value =
-        asset.branch ||
+        asset.department ||
         "";
 
 
@@ -1593,9 +1869,7 @@ function editAsset(
     document.getElementById(
         "assetCondition"
     ).value =
-        asset.condition ||
-        asset.asset_condition ||
-        "Good";
+        getAssetCondition(asset);
 
 
     document.getElementById(
@@ -1610,6 +1884,30 @@ function editAsset(
     ).value =
         asset.notes ||
         "";
+
+
+    // Hide the quick-add accessory options while editing
+    // (they only apply when creating a brand new asset)
+
+    const accessoryRow =
+        document.getElementById(
+            "accessoryQuickAdd"
+        );
+
+    if (accessoryRow) {
+
+        accessoryRow.style.display =
+            "none";
+
+        document.getElementById(
+            "assignMouse"
+        ).checked = false;
+
+        document.getElementById(
+            "assignCharger"
+        ).checked = false;
+
+    }
 
 
     const modal =
@@ -1631,6 +1929,12 @@ function editAsset(
 
 // =====================================================
 // VIEW ASSET
+//
+// Replaces the old blocking alert() with a small,
+// dismissible read-only panel built from the same markup
+// patterns as the notification banner, so it doesn't
+// freeze the rest of the page or read awkwardly with
+// screen readers.
 // =====================================================
 
 function viewAsset(
@@ -1650,55 +1954,110 @@ function viewAsset(
     }
 
 
-    alert(
+    const existing =
+        document.querySelector(
+            ".asset-view-overlay"
+        );
 
-        "Asset Details\n\n" +
+    if (existing) {
+        existing.remove();
+    }
 
-        "Asset: " +
-        (
-            asset.asset_name ||
-            asset.name ||
-            "-"
-        ) +
 
-        "\nType: " +
-        (
-            asset.asset_type ||
-            asset.type ||
-            "-"
-        ) +
+    const rows = [
+        ["Asset", getAssetName(asset)],
+        ["Type", getAssetType(asset)],
+        ["Serial Number", asset.serial_number || "-"],
+        ["Department", asset.department || "-"],
+        ["Assigned To", asset.assigned_to || "Not Assigned"],
+        ["Condition", getAssetCondition(asset)],
+        ["Status", asset.status || "-"]
+    ];
 
-        "\nSerial Number: " +
-        (
-            asset.serial_number ||
-            "-"
-        ) +
 
-        "\nBranch: " +
-        (
-            asset.branch ||
-            "-"
-        ) +
+    const overlay =
+        document.createElement("div");
 
-        "\nAssigned To: " +
-        (
-            asset.assigned_to ||
-            "Not Assigned"
-        ) +
+    overlay.className =
+        "modal asset-view-overlay show";
 
-        "\nCondition: " +
-        (
-            asset.condition ||
-            asset.asset_condition ||
-            "-"
-        ) +
+    overlay.style.display =
+        "flex";
 
-        "\nStatus: " +
-        (
-            asset.status ||
-            "-"
-        )
+    overlay.innerHTML = `
+        <div class="modal-content">
 
+            <div class="modal-header">
+
+                <div>
+                    <h2>Asset Details</h2>
+                </div>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    data-close-view>
+                    ×
+                </button>
+
+            </div>
+
+            <div class="asset-view-body">
+
+                ${
+                    rows.map(
+                        ([label, value]) => `
+                            <div class="asset-view-row">
+                                <span>${escapeHTML(label)}</span>
+                                <strong>${escapeHTML(value)}</strong>
+                            </div>
+                        `
+                    ).join("")
+                }
+
+            </div>
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-close-view>
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+
+    document.body.appendChild(overlay);
+
+
+    overlay.querySelectorAll(
+        "[data-close-view]"
+    ).forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => overlay.remove()
+            );
+
+        }
+    );
+
+
+    overlay.addEventListener(
+        "click",
+        event => {
+
+            if (event.target === overlay) {
+                overlay.remove();
+            }
+
+        }
     );
 
 }
@@ -1747,11 +2106,7 @@ async function deleteAsset(
     const confirmed =
         confirm(
             "Are you sure you want to delete this asset?\n\n" +
-            (
-                asset.asset_name ||
-                asset.name ||
-                "Asset"
-            )
+            getAssetName(asset)
         );
 
 
@@ -2044,6 +2399,16 @@ document.addEventListener(
 
             closeAssetForm();
 
+
+            const viewOverlay =
+                document.querySelector(
+                    ".asset-view-overlay"
+                );
+
+            if (viewOverlay) {
+                viewOverlay.remove();
+            }
+
         }
 
     }
@@ -2052,6 +2417,12 @@ document.addEventListener(
 
 // =====================================================
 // GLOBAL FUNCTIONS
+//
+// openAssetForm and logoutAssets are still called from
+// inline onclick="" attributes in assets.html (sidebar /
+// topbar buttons), so they stay on window. Table-row
+// actions (edit/view/delete) no longer need to be global
+// since they're wired up via event delegation above.
 // =====================================================
 
 window.openAssetForm =
@@ -2059,15 +2430,6 @@ window.openAssetForm =
 
 window.closeAssetForm =
     closeAssetForm;
-
-window.editAsset =
-    editAsset;
-
-window.viewAsset =
-    viewAsset;
-
-window.deleteAsset =
-    deleteAsset;
 
 window.logoutAssets =
     logoutAssets;

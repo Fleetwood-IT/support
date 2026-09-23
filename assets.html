@@ -4,8 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Fleetwood IT Support - IT Assets</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <!-- Minimal styles for the new read-only asset detail
+         overlay (replaces the old alert()). If style.css
+         already defines .modal / .modal-content, this just
+         adds the row layout on top of it. -->
+    <style>
+        .asset-view-body {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 8px 0 16px;
+        }
+
+        .asset-view-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .asset-view-row span {
+            opacity: 0.7;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,21 +42,30 @@
     <!-- =====================================================
          SIDEBAR
     ====================================================== -->
+
     <aside class="sidebar">
 
         <div class="sidebar-glow"></div>
 
         <div class="logo">
-            <div class="logo-icon">F</div>
+
+            <div class="logo-icon">
+                F
+            </div>
+
             <div class="logo-text">
                 <strong>Fleetwood</strong>
                 <span>IT Support Center</span>
             </div>
+
         </div>
+
 
         <nav class="sidebar-nav">
 
-            <div class="nav-section-title">MAIN MENU</div>
+            <div class="nav-section-title">
+                MAIN MENU
+            </div>
 
             <a href="dashboard.html">
                 <span>📊</span>
@@ -46,46 +82,55 @@
                 <span>New Asset</span>
             </a>
 
-            <div class="nav-section-title">MANAGEMENT</div>
+
+            <div class="nav-section-title">
+                MANAGEMENT
+            </div>
 
             <a href="assets.html" class="active">
                 <span>💻</span>
                 <span>IT Assets</span>
             </a>
 
-            <a href="staff-directory.html">
+            <a href="#">
                 <span>👥</span>
-                <span>Staff Directory</span>
+                <span>Users</span>
             </a>
 
-            <a href="maintenance.html">
+            <a href="#">
                 <span>🔧</span>
                 <span>Maintenance</span>
             </a>
 
-            <a href="reports.html">
+            <a href="#">
                 <span>📈</span>
                 <span>Reports</span>
             </a>
 
-            <div class="nav-section-title">SYSTEM</div>
 
-            <a href="knowledge-base.html">
+            <div class="nav-section-title">
+                SYSTEM
+            </div>
+
+            <a href="#">
                 <span>📚</span>
                 <span>Knowledge Base</span>
             </a>
 
-            <a href="notifications.html">
+            <a href="#">
                 <span>🔔</span>
                 <span>Notifications</span>
             </a>
 
-            <a href="settings.html">
+            <a href="#">
                 <span>⚙️</span>
                 <span>Settings</span>
             </a>
 
         </nav>
+
+
+        <!-- SIDEBAR FOOTER -->
 
         <div class="sidebar-footer">
 
@@ -95,11 +140,23 @@
             </div>
 
             <div class="user-mini">
-                <div class="user-avatar" id="assetUserAvatar">IT</div>
-                <div>
-                    <strong id="assetUserName">Loading...</strong>
-                    <small id="assetUserRole">Loading...</small>
+
+                <div class="user-avatar" id="assetUserAvatar">
+                    IT
                 </div>
+
+                <div>
+
+                    <strong id="assetUserName">
+                        Loading...
+                    </strong>
+
+                    <small id="assetUserRole">
+                        Loading...
+                    </small>
+
+                </div>
+
             </div>
 
         </div>
@@ -110,175 +167,401 @@
     <!-- =====================================================
          MAIN
     ====================================================== -->
+
     <main class="main">
 
         <!-- TOPBAR -->
+
         <header class="topbar">
 
             <div>
+
                 <div class="breadcrumb">
                     Fleetwood Lending Limited
                     <span>›</span>
                     IT Assets
                 </div>
-                <h1>IT Assets</h1>
-                <p>Manage and monitor Fleetwood's IT equipment.</p>
+
+                <h1>
+                    IT Assets
+                </h1>
+
+                <p>
+                    Manage and monitor Fleetwood's IT equipment.
+                </p>
+
             </div>
 
+
             <div class="topbar-actions">
-                <button class="btn btn-primary" onclick="openAssetForm()">
+
+                <button
+                    class="btn btn-primary"
+                    onclick="openAssetForm()">
+
                     ➕ Add Asset
+
                 </button>
-                <button class="btn btn-secondary" onclick="logoutAssets()">
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="logoutAssets()">
+
                     Logout
+
                 </button>
+
             </div>
 
         </header>
 
 
-        <!-- SUMMARY CARDS -->
+        <!-- =====================================================
+             SUMMARY CARDS
+        ====================================================== -->
+
         <section class="stats">
 
             <div class="stat-card">
-                <div class="stat-icon">💻</div>
+
+                <div class="stat-icon">
+                    💻
+                </div>
+
                 <div>
+
                     <span>Total Assets</span>
-                    <strong id="totalAssets">0</strong>
+
+                    <strong id="totalAssets">
+                        0
+                    </strong>
+
                 </div>
+
             </div>
 
+
             <div class="stat-card">
-                <div class="stat-icon">✅</div>
+
+                <div class="stat-icon">
+                    ✅
+                </div>
+
                 <div>
+
                     <span>Good</span>
-                    <strong id="goodAssets">0</strong>
+
+                    <strong id="goodAssets">
+                        0
+                    </strong>
+
                 </div>
+
             </div>
 
+
             <div class="stat-card">
-                <div class="stat-icon">⚠️</div>
+
+                <div class="stat-icon">
+                    ⚠️
+                </div>
+
                 <div>
+
                     <span>Faulty</span>
-                    <strong id="faultyAssets">0</strong>
+
+                    <strong id="faultyAssets">
+                        0
+                    </strong>
+
                 </div>
+
             </div>
 
+
             <div class="stat-card">
-                <div class="stat-icon">👤</div>
-                <div>
-                    <span>In Use</span>
-                    <strong id="usedAssets">0</strong>
+
+                <div class="stat-icon">
+                    👤
                 </div>
+
+                <div>
+
+                    <span>In Use</span>
+
+                    <strong id="usedAssets">
+                        0
+                    </strong>
+
+                </div>
+
             </div>
 
         </section>
 
 
-        <!-- ASSET INVENTORY -->
+        <!-- =====================================================
+             FILTERS
+        ====================================================== -->
+
         <section class="card">
 
             <div class="card-header">
+
                 <div>
-                    <h2>Asset Inventory</h2>
-                    <p>View all registered IT equipment.</p>
+
+                    <h2>
+                        Asset Inventory
+                    </h2>
+
+                    <p>
+                        View all registered IT equipment.
+                    </p>
+
                 </div>
+
             </div>
+
 
             <div class="asset-filters">
-                <input type="text" id="assetSearch" placeholder="Search asset, serial number, staff or branch...">
+
+                <input
+                    type="text"
+                    id="assetSearch"
+                    placeholder="Search asset, serial number, staff or department..."
+                >
+
 
                 <select id="assetTypeFilter">
-                    <option value="">All Asset Types</option>
-                    <option value="Laptop">Laptop</option>
-                    <option value="Desktop">Desktop</option>
-                    <option value="Monitor">Monitor</option>
-                    <option value="Charger">Charger</option>
-                    <option value="Mouse">Mouse</option>
-                    <option value="Keyboard">Keyboard</option>
-                    <option value="Printer">Printer</option>
-                    <option value="Router">Router</option>
-                    <option value="Switch">Switch</option>
-                    <option value="Phone">Phone</option>
-                    <option value="Other">Other</option>
+
+                    <option value="">
+                        All Asset Types
+                    </option>
+
+                    <option value="Laptop">
+                        Laptop
+                    </option>
+
+                    <option value="Desktop">
+                        Desktop
+                    </option>
+
+                    <option value="Monitor">
+                        Monitor
+                    </option>
+
+                    <option value="Charger">
+                        Charger
+                    </option>
+
+                    <option value="Mouse">
+                        Mouse
+                    </option>
+
+                    <option value="Keyboard">
+                        Keyboard
+                    </option>
+
+                    <option value="Printer">
+                        Printer
+                    </option>
+
+                    <option value="Router">
+                        Router
+                    </option>
+
+                    <option value="Switch">
+                        Switch
+                    </option>
+
+                    <option value="Phone">
+                        Phone
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
                 </select>
+
 
                 <select id="assetConditionFilter">
-                    <option value="">All Conditions</option>
-                    <option value="Good">Good</option>
-                    <option value="Faulty">Faulty</option>
+
+                    <option value="">
+                        All Conditions
+                    </option>
+
+                    <option value="Good">
+                        Good
+                    </option>
+
+                    <option value="Faulty">
+                        Faulty
+                    </option>
+
                 </select>
+
 
                 <select id="assetStatusFilter">
-                    <option value="">All Status</option>
-                    <option value="In Use">In Use</option>
-                    <option value="Available">Available</option>
-                    <option value="Under Maintenance">Under Maintenance</option>
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option value="In Use">
+                        In Use
+                    </option>
+
+                    <option value="Available">
+                        Available
+                    </option>
+
+                    <option value="Under Maintenance">
+                        Under Maintenance
+                    </option>
+
                 </select>
+
             </div>
 
+
+            <!-- =================================================
+                 TABLE
+            ================================================== -->
+
             <div class="table-container">
+
                 <table>
+
                     <thead>
+
                         <tr>
+
                             <th>Asset ID</th>
+
                             <th>Asset Type</th>
+
                             <th>Asset Name</th>
+
                             <th>Serial Number</th>
-                            <th>Branch</th>
+
+                            <th>Department</th>
+
                             <th>Assigned To</th>
+
                             <th>Condition</th>
+
                             <th>Status</th>
+
                             <th>Action</th>
+
                         </tr>
+
                     </thead>
+
+
                     <tbody id="assetsTableBody">
+
                         <tr>
-                            <td colspan="9">Loading assets...</td>
+
+                            <td colspan="9">
+
+                                Loading assets...
+
+                            </td>
+
                         </tr>
+
                     </tbody>
+
                 </table>
+
             </div>
 
         </section>
 
 
-        <!-- BRANCH SUMMARY -->
+        <!-- =====================================================
+             DEPARTMENT SUMMARY
+        ====================================================== -->
+
         <section class="card">
 
             <div class="card-header">
+
                 <div>
-                    <h2>Branch Asset Summary</h2>
-                    <p>Number of gadgets available at each branch.</p>
+
+                    <h2>
+                        Department Asset Summary
+                    </h2>
+
+                    <p>
+                        Number of gadgets assigned within each department.
+                    </p>
+
                 </div>
+
             </div>
 
+
             <div class="table-container">
+
                 <table>
+
                     <thead>
+
                         <tr>
-                            <th>Branch</th>
+
+                            <th>Department</th>
+
                             <th>Total Assets</th>
+
                             <th>Good</th>
+
                             <th>Faulty</th>
+
                             <th>In Use</th>
+
                             <th>Available</th>
+
                         </tr>
+
                     </thead>
-                    <tbody id="branchAssetsBody">
+
+
+                    <tbody id="departmentAssetsBody">
+
                         <tr>
-                            <td colspan="6">Loading...</td>
+
+                            <td colspan="6">
+                                Loading...
+                            </td>
+
                         </tr>
+
                     </tbody>
+
                 </table>
+
             </div>
 
         </section>
 
 
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+
         <footer class="footer">
-            <span>Fleetwood Lending Limited</span>
-            <span>IT Support Management System</span>
+
+            <span>
+                Fleetwood Lending Limited
+            </span>
+
+            <span>
+                IT Support Management System
+            </span>
+
         </footer>
 
     </main>
@@ -289,98 +572,328 @@
 <!-- =========================================================
      ADD / EDIT ASSET MODAL
 ========================================================== -->
-<div id="assetModal" class="modal">
+
+<div
+    id="assetModal"
+    class="modal">
 
     <div class="modal-content">
 
         <div class="modal-header">
+
             <div>
-                <h2 id="assetModalTitle">Add IT Asset</h2>
-                <p>Register a new company asset.</p>
+
+                <h2 id="assetModalTitle">
+                    Add IT Asset
+                </h2>
+
+                <p>
+                    Register a new company asset.
+                </p>
+
             </div>
-            <button type="button" class="modal-close" onclick="closeAssetForm()">×</button>
+
+            <button
+                type="button"
+                class="modal-close"
+                onclick="closeAssetForm()">
+
+                ×
+
+            </button>
+
         </div>
+
 
         <form id="assetForm">
 
-            <input type="hidden" id="assetId">
+            <input
+                type="hidden"
+                id="assetId"
+            >
+
 
             <div class="form-row">
+
                 <div class="form-group">
-                    <label>Asset Type</label>
-                    <select id="assetType" required>
-                        <option value="">Select Asset Type</option>
-                        <option value="Laptop">Laptop</option>
-                        <option value="Desktop">Desktop</option>
-                        <option value="Monitor">Monitor</option>
-                        <option value="Charger">Charger</option>
-                        <option value="Mouse">Mouse</option>
-                        <option value="Keyboard">Keyboard</option>
-                        <option value="Printer">Printer</option>
-                        <option value="Router">Router</option>
-                        <option value="Switch">Switch</option>
-                        <option value="Phone">Phone</option>
-                        <option value="Other">Other</option>
+
+                    <label>
+                        Asset Type
+                    </label>
+
+                    <select
+                        id="assetType"
+                        required>
+
+                        <option value="">
+                            Select Asset Type
+                        </option>
+
+                        <option value="Laptop">
+                            Laptop
+                        </option>
+
+                        <option value="Desktop">
+                            Desktop
+                        </option>
+
+                        <option value="Monitor">
+                            Monitor
+                        </option>
+
+                        <option value="Charger">
+                            Charger
+                        </option>
+
+                        <option value="Mouse">
+                            Mouse
+                        </option>
+
+                        <option value="Keyboard">
+                            Keyboard
+                        </option>
+
+                        <option value="Printer">
+                            Printer
+                        </option>
+
+                        <option value="Router">
+                            Router
+                        </option>
+
+                        <option value="Switch">
+                            Switch
+                        </option>
+
+                        <option value="Phone">
+                            Phone
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
                     </select>
+
                 </div>
 
+
                 <div class="form-group">
-                    <label>Asset Name</label>
-                    <input type="text" id="assetName" placeholder="e.g. Lenovo ThinkPad" required>
+
+                    <label>
+                        Asset Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="assetName"
+                        placeholder="e.g. Lenovo ThinkPad"
+                        required>
+
                 </div>
+
             </div>
 
+
             <div class="form-row">
-                <div class="form-group">
-                    <label>Serial Number</label>
-                    <input type="text" id="serialNumber" placeholder="Enter serial number">
-                </div>
 
                 <div class="form-group">
-                    <label>Asset Tag</label>
-                    <input type="text" id="assetTag" placeholder="e.g. FL-IT-001">
+
+                    <label>
+                        Serial Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="serialNumber"
+                        placeholder="Enter serial number">
+
                 </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Asset Tag
+                    </label>
+
+                    <input
+                        type="text"
+                        id="assetTag"
+                        placeholder="e.g. FL-IT-001">
+
+                </div>
+
             </div>
 
+
             <div class="form-row">
-                <div class="form-group">
-                    <label>Branch</label>
-                    <input type="text" id="assetBranch" placeholder="Enter branch" required>
-                </div>
 
                 <div class="form-group">
-                    <label>Assigned To</label>
-                    <input type="text" id="assignedTo" placeholder="Staff name">
+
+                    <label>
+                        Department
+                    </label>
+
+                    <input
+                        type="text"
+                        id="assetDepartment"
+                        placeholder="Enter department"
+                        required>
+
                 </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Assigned To
+                    </label>
+
+                    <input
+                        type="text"
+                        id="assignedTo"
+                        placeholder="Staff name">
+
+                </div>
+
             </div>
 
+
             <div class="form-row">
+
                 <div class="form-group">
-                    <label>Condition</label>
-                    <select id="assetCondition" required>
-                        <option value="Good">Good</option>
-                        <option value="Faulty">Faulty</option>
+
+                    <label>
+                        Condition
+                    </label>
+
+                    <select
+                        id="assetCondition"
+                        required>
+
+                        <option value="Good">
+                            Good
+                        </option>
+
+                        <option value="Faulty">
+                            Faulty
+                        </option>
+
                     </select>
+
                 </div>
 
+
                 <div class="form-group">
-                    <label>Status</label>
-                    <select id="assetStatus" required>
-                        <option value="Available">Available</option>
-                        <option value="In Use">In Use</option>
-                        <option value="Under Maintenance">Under Maintenance</option>
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select
+                        id="assetStatus"
+                        required>
+
+                        <option value="Available">
+                            Available
+                        </option>
+
+                        <option value="In Use">
+                            In Use
+                        </option>
+
+                        <option value="Under Maintenance">
+                            Under Maintenance
+                        </option>
+
                     </select>
+
                 </div>
+
             </div>
+
+
+            <!-- =========================================
+                 QUICK-ADD ACCESSORIES
+                 (only used when creating a NEW asset)
+            ========================================== -->
+
+            <div
+                class="form-row"
+                id="accessoryQuickAdd"
+            >
+
+                <div class="form-group">
+
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+
+                        <input
+                            type="checkbox"
+                            id="assignMouse"
+                            style="width:auto;"
+                        >
+
+                        Also assign a mouse to this staff member?
+
+                    </label>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+
+                        <input
+                            type="checkbox"
+                            id="assignCharger"
+                            style="width:auto;"
+                        >
+
+                        Also assign a charger to this staff member?
+
+                    </label>
+
+                </div>
+
+            </div>
+
 
             <div class="form-group">
-                <label>Notes</label>
-                <textarea id="assetNotes" rows="4" placeholder="Additional information about this asset..."></textarea>
+
+                <label>
+                    Notes
+                </label>
+
+                <textarea
+                    id="assetNotes"
+                    rows="4"
+                    placeholder="Additional information about this asset..."></textarea>
+
             </div>
 
+
             <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeAssetForm()">Cancel</button>
-                <button type="submit" class="btn btn-primary" id="assetSubmitButton">Save Asset</button>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="closeAssetForm()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    id="assetSubmitButton">
+
+                    Save Asset
+
+                </button>
+
             </div>
 
         </form>
@@ -390,8 +903,14 @@
 </div>
 
 
+<!-- =========================================================
+     SUPABASE
+========================================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="assets.js"></script>
 
 </body>
+
 </html>

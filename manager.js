@@ -1331,6 +1331,12 @@ function setApprovalButtonsDisabled(
 
 // =====================================================
 // RENDER COMPLAINTS
+// FIX: previously only matched tickets containing the
+// literal word "complaint" in category/subject, which
+// staff.js never sets — so this table was always empty.
+// Staff-submitted tickets never have created_by set
+// (only IT/manager/admin-created tickets via dashboard.js
+// or assets.js do), so that's the correct signal to use.
 // =====================================================
 
 function renderComplaints() {
@@ -1344,30 +1350,7 @@ function renderComplaints() {
         allTickets.filter(
             function (ticket) {
 
-                const category =
-                    String(
-                        ticket.category || ""
-                    )
-                    .trim()
-                    .toLowerCase();
-
-
-                const subject =
-                    String(
-                        ticket.subject || ""
-                    )
-                    .trim()
-                    .toLowerCase();
-
-
-                return (
-                    category.includes(
-                        "complaint"
-                    ) ||
-                    subject.includes(
-                        "complaint"
-                    )
-                );
+                return !ticket.created_by;
 
             }
         );

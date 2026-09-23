@@ -107,6 +107,47 @@ async function checkSupabaseConnection() {
 
 
 // ==========================================
+// SESSION CHECK
+// ==========================================
+
+async function checkTicketsSession() {
+
+    const {
+        data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+        window.location.href = "index.html";
+        return false;
+    }
+
+    const {
+        data: profile,
+        error
+    } = await supabaseClient
+        .from("user_profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+    if (error || !profile) {
+        window.location.href = "index.html";
+        return false;
+    }
+
+    const role = String(profile.role || "").toLowerCase();
+
+    if (role !== "it" && role !== "manager" && role !== "admin") {
+        alert("You do not have permission to view this page.");
+        window.location.href = "index.html";
+        return false;
+    }
+
+    return true;
+}
+
+
+// ==========================================
 // LOAD TICKETS
 // ==========================================
 
@@ -1288,7 +1329,13 @@ function escapeHTML(
 
 document.addEventListener(
     "DOMContentLoaded",
-    function() {
+    async function() {
+
+        const allowed = await checkTicketsSession();
+
+        if (!allowed) {
+            return;
+        }
 
         loadTickets();
 
