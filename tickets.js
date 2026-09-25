@@ -66,6 +66,7 @@ const closedMessage =
 
 let allTickets = [];
 let selectedTicket = null;
+let currentProfile = null;
 
 
 // ==========================================
@@ -126,7 +127,7 @@ async function checkTicketsSession() {
         error
     } = await supabaseClient
         .from("user_profiles")
-        .select("role")
+        .select("*")
         .eq("id", session.user.id)
         .single();
 
@@ -142,6 +143,8 @@ async function checkTicketsSession() {
         window.location.href = "index.html";
         return false;
     }
+
+    currentProfile = profile;
 
     return true;
 }
@@ -574,12 +577,21 @@ function renderTickets(
                                 click listener avoids that entirely.
                             -->
                             <td>
-                                <button
-                                    class="view-btn"
-                                    data-id="${escapeHTML(String(ticket.id))}"
-                                >
-                                    View
-                                </button>
+                                <div class="action-buttons">
+                                    <button
+                                        class="view-btn"
+                                        data-id="${escapeHTML(String(ticket.id))}"
+                                    >
+                                        View
+                                    </button>
+
+                                    <button
+                                        class="delete-btn"
+                                        data-id="${escapeHTML(String(ticket.id))}"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </td>
 
                         </tr>
@@ -608,6 +620,31 @@ if (ticketsBody) {
             }
 
             openTicket(
+                button.dataset.id
+            );
+        }
+    );
+}
+
+
+// ==========================================
+// DELETE BUTTON CLICKS (event delegation)
+// ==========================================
+
+if (ticketsBody) {
+
+    ticketsBody.addEventListener(
+        "click",
+        function(event) {
+
+            const button =
+                event.target.closest(".delete-btn");
+
+            if (!button) {
+                return;
+            }
+
+            deleteTicket(
                 button.dataset.id
             );
         }
@@ -1119,6 +1156,131 @@ if (saveTicket) {
                 "Save Changes";
         }
     );
+}
+
+
+// ==========================================
+// DELETE TICKET
+// ==========================================
+
+async function deleteTicket(id) {
+
+    // ==========================================
+    // PERMISSION CHECK
+    //
+    // Anyone who can access this page (IT,
+    // Manager, Admin) can delete a ticket, since
+    // this page already lets all three update
+    // ticket status/priority freely. Tighten this
+    // to IT-only (like deleteAsset in assets.js)
+    // if you'd rather restrict deletion further.
+    // ==========================================
+
+    const role =
+        String(
+            currentProfile?.role ||
+            ""
+        ).toLowerCase();
+
+
+    if (
+        role !== "it" &&
+        role !== "manager" &&
+        role !== "admin"
+    ) {
+
+        alert(
+            "You do not have permission to delete tickets."
+        );
+
+        return;
+    }
+
+
+    const ticket =
+        allTickets.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+
+    if (!ticket) {
+        return;
+    }
+
+
+    const ticketNumber =
+        `IT-${String(ticket.id).padStart(3, "0")}`;
+
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to permanently delete this ticket?\n\n" +
+            `${ticketNumber} — ${ticket.subject || "No subject"}\n\n` +
+            "This cannot be undone."
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        const { error } =
+            await supabaseClient
+                .from("tickets")
+                .delete()
+                .eq("id", id);
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        // If the deleted ticket is currently open
+        // in the modal, close the modal so we don't
+        // leave a "ghost" ticket on screen.
+
+        if (
+            selectedTicket &&
+            String(selectedTicket.id) === String(id)
+        ) {
+
+            selectedTicket = null;
+
+            if (ticketModal) {
+
+                ticketModal.classList.remove(
+                    "show"
+                );
+            }
+        }
+
+
+        alert(
+            `Ticket ${ticketNumber} was deleted successfully.`
+        );
+
+
+        await loadTickets();
+
+
+    } catch (error) {
+
+        console.error(
+            "Delete ticket error:",
+            error
+        );
+
+        alert(
+            "Unable to delete this ticket.\n\n" +
+            (error.message || "Unknown error")
+        );
+    }
 }
 
 

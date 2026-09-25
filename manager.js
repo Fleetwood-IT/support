@@ -32,6 +32,7 @@ let selectedTicket = null;
 let allTickets = [];
 let allAssets = [];
 let allSuggestions = [];
+let allStaff = [];
 
 
 // =====================================================
@@ -79,6 +80,18 @@ const topbarGreeting =
 
 const sidebarRoleLabel =
     document.getElementById("sidebarRoleLabel");
+
+const managerStaffBody =
+    document.getElementById("managerStaffBody");
+
+const staffSearchInput =
+    document.getElementById("staffSearchInput");
+
+const staffDepartmentFilter =
+    document.getElementById("staffDepartmentFilter");
+
+const staffStatusFilter =
+    document.getElementById("staffStatusFilter");
 
 
 // =====================================================
@@ -294,6 +307,8 @@ async function loadDashboard() {
 
     await loadSuggestions();
 
+    await loadStaff();
+
     updateSummaryCards();
 
     renderApprovalRequests();
@@ -307,6 +322,8 @@ async function loadDashboard() {
     renderAssets();
 
     renderSuggestions();
+
+    renderStaffDirectory();
 
 }
 
@@ -426,6 +443,46 @@ async function loadSuggestions() {
 
 
     allSuggestions =
+        data || [];
+
+}
+
+
+// =====================================================
+// LOAD STAFF DIRECTORY
+// =====================================================
+
+async function loadStaff() {
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("staff_directory")
+            .select("*")
+            .order(
+                "staff_name",
+                {
+                    ascending: true
+                }
+            );
+
+
+    if (error) {
+
+        console.warn(
+            "Staff directory could not be loaded:",
+            error.message
+        );
+
+        allStaff = [];
+
+        return;
+    }
+
+
+    allStaff =
         data || [];
 
 }
@@ -2017,6 +2074,282 @@ function renderSuggestions() {
                 }
             )
             .join("");
+
+}
+
+
+// =====================================================
+// RENDER STAFF DIRECTORY (READ-ONLY)
+// =====================================================
+
+function renderStaffDirectory() {
+
+    if (!managerStaffBody) {
+        return;
+    }
+
+
+    // -------------------------------------------------
+    // SUMMARY COUNTS
+    // -------------------------------------------------
+
+    const total =
+        allStaff.length;
+
+
+    const active =
+        allStaff.filter(
+            function (staff) {
+
+                return staff.staff_status === "Active";
+
+            }
+        ).length;
+
+
+    const resigned =
+        allStaff.filter(
+            function (staff) {
+
+                return staff.staff_status === "Resigned";
+
+            }
+        ).length;
+
+
+    setText(
+        "staffTotalCount",
+        total
+    );
+
+    setText(
+        "staffActiveCount",
+        active
+    );
+
+    setText(
+        "staffResignedCount",
+        resigned
+    );
+
+
+    // -------------------------------------------------
+    // DEPARTMENT FILTER OPTIONS
+    // -------------------------------------------------
+
+    populateStaffDepartmentFilter();
+
+
+    // -------------------------------------------------
+    // APPLY FILTERS
+    // -------------------------------------------------
+
+    const search =
+        (staffSearchInput?.value || "")
+            .trim()
+            .toLowerCase();
+
+
+    const department =
+        staffDepartmentFilter?.value || "";
+
+
+    const status =
+        staffStatusFilter?.value || "";
+
+
+    const filtered =
+        allStaff.filter(
+            function (staff) {
+
+                const matchesSearch =
+                    !search ||
+                    String(staff.staff_name || "").toLowerCase().includes(search) ||
+                    String(staff.department || "").toLowerCase().includes(search) ||
+                    String(staff.phone_number || "").toLowerCase().includes(search) ||
+                    String(staff.laptop_serial_number || "").toLowerCase().includes(search);
+
+
+                const matchesDepartment =
+                    !department ||
+                    staff.department === department;
+
+
+                const matchesStatus =
+                    !status ||
+                    staff.staff_status === status;
+
+
+                return (
+                    matchesSearch &&
+                    matchesDepartment &&
+                    matchesStatus
+                );
+
+            }
+        );
+
+
+    // -------------------------------------------------
+    // RENDER TABLE
+    // -------------------------------------------------
+
+    if (filtered.length === 0) {
+
+        managerStaffBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="no-data">
+                    No staff records found.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    managerStaffBody.innerHTML =
+        filtered
+            .map(
+                function (staff) {
+
+                    const statusClass =
+                        staff.staff_status === "Active"
+                            ? "active"
+                            : "resigned";
+
+
+                    return `
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    ${escapeHTML(staff.staff_name || "-")}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${escapeHTML(staff.department || "-")}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(staff.phone_number || "-")}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(staff.current_laptop || "-")}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(staff.laptop_serial_number || "-")}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(staff.other_gadgets || "-")}
+                            </td>
+
+                            <td>
+                                <span class="staff-status-pill ${statusClass}">
+                                    ${escapeHTML(staff.staff_status || "-")}
+                                </span>
+                            </td>
+
+                        </tr>
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+// =====================================================
+// POPULATE STAFF DEPARTMENT FILTER
+// =====================================================
+
+function populateStaffDepartmentFilter() {
+
+    if (!staffDepartmentFilter) {
+        return;
+    }
+
+
+    const currentValue =
+        staffDepartmentFilter.value;
+
+
+    const departments =
+        Array.from(
+            new Set(
+                allStaff
+                    .map(function (staff) {
+
+                        return staff.department;
+
+                    })
+                    .filter(Boolean)
+            )
+        ).sort();
+
+
+    staffDepartmentFilter.innerHTML =
+        `<option value="">All departments</option>` +
+        departments
+            .map(function (department) {
+
+                return `<option value="${escapeHTML(department)}">${escapeHTML(department)}</option>`;
+
+            })
+            .join("");
+
+
+    // Restore whatever the manager had selected, if it
+    // still exists in the refreshed department list.
+
+    if (
+        currentValue &&
+        departments.includes(currentValue)
+    ) {
+
+        staffDepartmentFilter.value =
+            currentValue;
+
+    }
+
+}
+
+
+// =====================================================
+// STAFF DIRECTORY FILTER EVENTS
+// =====================================================
+
+if (staffSearchInput) {
+
+    staffSearchInput.addEventListener(
+        "input",
+        renderStaffDirectory
+    );
+
+}
+
+
+if (staffDepartmentFilter) {
+
+    staffDepartmentFilter.addEventListener(
+        "change",
+        renderStaffDirectory
+    );
+
+}
+
+
+if (staffStatusFilter) {
+
+    staffStatusFilter.addEventListener(
+        "change",
+        renderStaffDirectory
+    );
 
 }
 

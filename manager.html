@@ -749,6 +749,52 @@
         .suggestion-footer button:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* =====================================================
+           STAFF DIRECTORY
+           ===================================================== */
+
+        .staff-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .staff-filters input,
+        .staff-filters select {
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--ink);
+            font-size: 13px;
+            font-family: var(--font-body);
+        }
+
+        .staff-filters input {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .staff-filters input:focus,
+        .staff-filters select:focus {
+            outline: 2px solid var(--indigo);
+            outline-offset: 1px;
+        }
+
+        .staff-status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 11.5px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .staff-status-pill.active { background: var(--green-soft); color: var(--green-ink); }
+        .staff-status-pill.resigned { background: var(--red-soft); color: var(--red); }
+
+        /* =====================================================
            FOOTER
            ===================================================== */
 
@@ -974,6 +1020,11 @@
             <a href="#assetsSection">
                 <span>💻</span>
                 <span>IT Assets</span>
+            </a>
+
+            <a href="#staffSection">
+                <span>👥</span>
+                <span>Staff Directory</span>
             </a>
 
             <a href="#departmentSection">
@@ -1240,6 +1291,96 @@
                     <div class="no-data" style="grid-column: 1 / -1;">
                         Loading suggestions…
                     </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 STAFF DIRECTORY
+                 ================================================= -->
+
+            <section class="manager-section" id="staffSection">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Staff Directory</h2>
+
+                        <p>
+                            Company staff records and the IT equipment
+                            currently assigned to each of them.
+                        </p>
+                    </div>
+
+                    <span class="readonly-badge">
+                        Read-only
+                    </span>
+
+                </div>
+
+                <div class="suggestion-stats" style="margin-bottom: 18px;">
+
+                    <div class="suggestion-stat">
+                        Total <strong id="staffTotalCount">0</strong>
+                    </div>
+
+                    <div class="suggestion-stat">
+                        Active <strong id="staffActiveCount">0</strong>
+                    </div>
+
+                    <div class="suggestion-stat">
+                        Resigned <strong id="staffResignedCount">0</strong>
+                    </div>
+
+                </div>
+
+                <div class="staff-filters">
+
+                    <input
+                        type="text"
+                        id="staffSearchInput"
+                        placeholder="Search by name, department, phone or serial number..."
+                    >
+
+                    <select id="staffDepartmentFilter">
+                        <option value="">All departments</option>
+                    </select>
+
+                    <select id="staffStatusFilter">
+                        <option value="">All statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Resigned">Resigned</option>
+                    </select>
+
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table class="manager-table">
+
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Phone</th>
+                                <th>Current Laptop</th>
+                                <th>Serial Number</th>
+                                <th>Other Gadgets</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="managerStaffBody">
+                            <tr>
+                                <td colspan="7" class="no-data">
+                                    Loading staff directory…
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
 
                 </div>
 
