@@ -1229,15 +1229,33 @@ async function deleteTicket(id) {
 
     try {
 
-        const { error } =
+        // .select() after .delete() makes Supabase return the
+        // rows that were actually deleted. If RLS silently
+        // blocks the delete, "error" stays null but "data"
+        // comes back as an empty array — without checking
+        // that, this would report false success.
+
+        const { data, error } =
             await supabaseClient
                 .from("tickets")
                 .delete()
-                .eq("id", id);
+                .eq("id", id)
+                .select();
 
 
         if (error) {
             throw error;
+        }
+
+
+        if (!data || !data.length) {
+
+            throw new Error(
+                "The ticket was not deleted. This usually means " +
+                "a database permission (Row Level Security) policy " +
+                "is blocking the delete for your role."
+            );
+
         }
 
 
