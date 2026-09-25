@@ -533,13 +533,26 @@ function renderSuggestions(
 
                             <td>
 
-                                <button
-                                    class="view-btn"
-                                    onclick="viewSuggestion(${item.id})">
+                                <div class="action-buttons">
 
-                                    View
+                                    <button
+                                        class="view-btn"
+                                        onclick="viewSuggestion(${item.id})">
 
-                                </button>
+                                        View
+
+                                    </button>
+
+
+                                    <button
+                                        class="delete-btn"
+                                        data-id="${escapeHtml(String(item.id))}">
+
+                                        Delete
+
+                                    </button>
+
+                                </div>
 
                             </td>
 
@@ -789,6 +802,205 @@ async function updateSuggestion() {
 
         alert(
             "An unexpected error occurred."
+        );
+
+    }
+
+}
+
+
+// ============================================
+// DELETE BUTTON CLICKS (event delegation)
+// ============================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const tbody =
+            document.getElementById(
+                "suggestionsBody"
+            );
+
+        if (tbody) {
+
+            tbody.addEventListener(
+                "click",
+                function (event) {
+
+                    const button =
+                        event.target.closest(
+                            ".delete-btn"
+                        );
+
+                    if (!button) {
+                        return;
+                    }
+
+                    deleteSuggestion(
+                        button.dataset.id
+                    );
+
+                }
+            );
+
+        }
+
+    }
+);
+
+
+// ============================================
+// DELETE SUGGESTION
+// ============================================
+
+async function deleteSuggestion(id) {
+
+    // Same role check used to gate access to this
+    // page in checkSession(). Tighten to
+    // manager/admin only if IT shouldn't be able
+    // to delete staff suggestions.
+
+    const {
+        data: {
+            session
+        }
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+    if (!session) {
+
+        window.location.href =
+            "index.html";
+
+        return;
+
+    }
+
+
+    const {
+        data: profile
+    } =
+        await supabaseClient
+            .from("user_profiles")
+            .select("role")
+            .eq("id", session.user.id)
+            .single();
+
+    const role =
+        String(profile?.role || "")
+            .toLowerCase();
+
+    if (
+        role !== "it" &&
+        role !== "manager" &&
+        role !== "admin"
+    ) {
+
+        alert(
+            "You do not have permission to delete suggestions."
+        );
+
+        return;
+
+    }
+
+
+    const suggestion =
+        allSuggestions.find(
+            function (item) {
+
+                return String(item.id) ===
+                       String(id);
+
+            }
+        );
+
+    if (!suggestion) {
+        return;
+    }
+
+
+    const reference =
+        suggestion.suggestion_number ||
+        createSuggestionNumber(suggestion.id);
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to permanently delete this suggestion?\n\n" +
+            `${reference} — ${suggestion.subject || "No subject"}\n\n` +
+            "This cannot be undone."
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        // .select() after .delete() lets us see which rows
+        // were actually deleted. If Row Level Security
+        // silently blocks the delete, "error" stays null but
+        // "data" comes back empty — without this check we'd
+        // report false success (the same issue tickets.js had).
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("suggestions")
+                .delete()
+                .eq("id", id)
+                .select();
+
+        if (error) {
+            throw error;
+        }
+
+        if (!data || !data.length) {
+
+            throw new Error(
+                "The suggestion was not deleted. This usually " +
+                "means a database permission (Row Level Security) " +
+                "policy is blocking the delete for your role."
+            );
+
+        }
+
+
+        if (
+            currentSuggestion &&
+            String(currentSuggestion.id) === String(id)
+        ) {
+
+            closeSuggestionModal();
+
+        }
+
+
+        alert(
+            `Suggestion ${reference} was deleted successfully.`
+        );
+
+
+        await loadSuggestions();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Delete suggestion error:",
+            error
+        );
+
+        alert(
+            "Unable to delete this suggestion.\n\n" +
+            (error.message || "Unknown error")
         );
 
     }
