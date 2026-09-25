@@ -114,6 +114,27 @@
             color: var(--text);
         }
 
+        /* Keep the Action column (View/Delete) visible even
+           when the table is narrower than its 950px min-width
+           and has to scroll horizontally — without this, those
+           buttons can end up scrolled out of view on smaller
+           windows. */
+        .tickets-table th:last-child,
+        .tickets-table td:last-child {
+            position: sticky;
+            right: 0;
+            background: white;
+            box-shadow: -6px 0 6px -6px rgba(0, 0, 0, 0.12);
+        }
+
+        .tickets-table th:last-child {
+            background: #f7f9fc;
+        }
+
+        .tickets-table tr:hover td:last-child {
+            background: #f9fbff;
+        }
+
         .tickets-table tr:hover {
             background: #f9fbff;
         }
